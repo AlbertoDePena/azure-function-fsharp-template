@@ -1,0 +1,13 @@
+.vs
+obj
+bin
+
+*.csproj.user
+*.fsproj.user
+*.suo
+
+.fable
+.cache
+.paket
+.fake
+.ionide
