@@ -9,7 +9,8 @@
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary"
 			],
-			"type": "process",
+			// shell in Linux, process in Windows
+			"type": "shell",
 			"problemMatcher": "$msCompile"
 		},
 		{
@@ -20,7 +21,8 @@
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary"
 			],
-			"type": "process",
+			// shell in Linux, process in Windows
+			"type": "shell",
 			"dependsOn": "clean",
 			"group": {
 				"kind": "build",
@@ -38,7 +40,8 @@
             "options": {
 				"cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.1"
 			},			
-			"type": "process",
+			// shell in Linux, process in Windows
+			"type": "shell",
 			"dependsOn": "build",
 			"problemMatcher": "$msCompile"
 		}
