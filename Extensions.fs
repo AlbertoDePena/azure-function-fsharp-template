@@ -1,6 +1,20 @@
 namespace azure_function_fsharp
 
 [<AutoOpen>]
+module ClaimsPrincipalExtensions =
+    open System.Security.Claims
+
+    type ClaimsPrincipal with
+
+        member this.TryGetClaimValue(name: string) =
+            if this.Identity.IsAuthenticated then
+                this.FindFirst(fun claim -> claim.Type = name)
+                |> Option.ofObj
+                |> Option.map (fun claim -> claim.Value)
+            else
+                None
+
+[<AutoOpen>]
 module HttpRequestExtensions =
     open System
     open Microsoft.AspNetCore.Http
