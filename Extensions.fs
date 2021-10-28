@@ -31,8 +31,18 @@ module HttpRequestExtensions =
                 | false, _ -> None
 
         member this.ReadFormAsJson() =
+            let canonicalizeValue (value: string) =
+                if String.IsNullOrWhiteSpace value then null
+                elif value = "null" then null
+                else value
+
             this.Form
-            |> Seq.map (fun item -> (item.Key, item.Value.ToString()))
+            |> Seq.map (fun item ->
+                (item.Key,
+                 item.Value
+                 |> Seq.tryHead
+                 |> Option.map canonicalizeValue
+                 |> Option.defaultValue null))
             |> dict
             |> JsonConvert.SerializeObject
 
