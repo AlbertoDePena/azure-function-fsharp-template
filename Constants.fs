@@ -1,19 +1,16 @@
 namespace azure_function_fsharp
 
-[<CLIMutable>]
-type GreeterOptions = { Message: string }
-
 [<RequireQualifiedAccess>]
 module HttpMethod =
 
     [<Literal>]
-    let Delete = "delete"
+    let Delete = "DELETE"
 
     [<Literal>]
-    let Get = "get"
+    let Get = "GET"
 
     [<Literal>]
-    let Post = "post"
+    let Post = "POST"
 
     [<Literal>]
-    let Put = "put"
+    let Put = "PUT"
