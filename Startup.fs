@@ -12,7 +12,7 @@ type Startup() =
 
         builder
             .Services
-            .AddOptions<GreeterConfiguration>()
+            .AddOptions<GreeterOptions>()
             .Configure<IConfiguration>(fun settings configuration -> configuration.GetSection("Greeter").Bind(settings))
         |> ignore
 

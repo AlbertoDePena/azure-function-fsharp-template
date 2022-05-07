@@ -1,7 +1,7 @@
 namespace azure_function_fsharp
 
 [<CLIMutable>]
-type GreeterConfiguration = { Message: string }
+type GreeterOptions = { Message: string }
 
 [<RequireQualifiedAccess>]
 module HttpMethod =

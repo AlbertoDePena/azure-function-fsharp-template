@@ -38,7 +38,7 @@
                 "start"
             ],
             "options": {
-				"cwd": "${workspaceFolder}/bin/Debug/netcoreapp3.1"
+				"cwd": "${workspaceFolder}/bin/Debug/net6.0"
 			},			
 			// shell in Linux, process in Windows
 			"type": "shell",

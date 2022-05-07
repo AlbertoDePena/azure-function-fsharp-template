@@ -6,9 +6,6 @@
             "samplingSettings": {
                 "isEnabled": true
             }
-        },
-        "logLevel": {
-            "Function.SayHello": "Trace"
         }
     }
 }
