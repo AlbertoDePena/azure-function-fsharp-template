@@ -17,8 +17,10 @@ module ClaimsPrincipalExtensions =
 [<AutoOpen>]
 module HttpRequestExtensions =
     open System
+    open System.IO
     open Microsoft.AspNetCore.Http
     open Newtonsoft.Json
+    open FsToolkit.ErrorHandling
 
     type HttpRequest with
 
@@ -51,7 +53,8 @@ module HttpRequestExtensions =
                 | false, _ -> None
                 
         member this.ReadJsonAsAsync<'a>() =
-            this.ReadAsStringAsync()
+            use reader = new StreamReader(this.Body)
+            reader.ReadToEndAsync()            
             |> Async.AwaitTask
             |> Async.map (JsonConvert.DeserializeObject<'a>)
 
