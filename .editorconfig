@@ -1,0 +1,5 @@
+root = true
+
+[*.fs]
+indent_size=4
+fsharp_single_argument_web_mode=true

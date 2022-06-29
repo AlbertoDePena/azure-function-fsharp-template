@@ -9,19 +9,24 @@ open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Options
 
-type Greeter(greeterOptions: IOptions<GreeterOptions>) =
+type Greeter(applicationOptions: IOptions<ApplicationOptions>, functionsMiddleware: FunctionsMiddleware) =
 
     [<FunctionName("SayHello")>]
     member this.SayHello
         (
-            [<HttpTrigger(AuthorizationLevel.Function, HttpMethod.Get)>] httpRequest: HttpRequest,
+            [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest,
             logger: ILogger
         ) =
 
-        let correlationId = Guid.NewGuid().ToString()
+        functionsMiddleware.Execute httpRequest (fun () ->
+            async {
+                let correlationId = Guid.NewGuid().ToString()
 
-        let message = greeterOptions.Value.Message
+                let message = applicationOptions.Value.Message
 
-        logger.LogDebug("what it do? {CorrelationId}", correlationId)
+                logger.LogDebug("what it do? {CorrelationId}", correlationId)
 
-        OkObjectResult(message) :> IActionResult
+                return OkObjectResult(message) :> IActionResult
+            })
+
+        

@@ -14,8 +14,8 @@ type Startup() =
 
         builder
             .Services
-            .AddOptions<GreeterOptions>()
-            .Configure<IConfiguration>(fun settings configuration -> configuration.GetSection("Greeter").Bind(settings))
+            .AddOptions<ApplicationOptions>()
+            .Configure<IConfiguration>(fun settings configuration -> configuration.GetSection("Application").Bind(settings))
         |> ignore
 
         builder
@@ -24,9 +24,12 @@ type Startup() =
             .AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
         |> ignore
 
-        if configuration.GetValue<bool> "ENABLE_DETAILED_SQL_TELEMETRY" then
+        if configuration.GetValue<bool> "ENABLE_SQL_TELEMETRY" then
             builder.Services.AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
             |> ignore
+
+        builder.Services.AddTransient<FunctionsMiddleware>()
+        |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]
 do ()

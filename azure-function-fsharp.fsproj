@@ -10,9 +10,10 @@
   <ItemGroup>
     <Compile Include="Constants.fs" />
     <Compile Include="Options.fs" />
-    <Compile Include="Extensions.fs" />    
+    <Compile Include="Extensions.fs" />  
+    <Compile Include="FunctionsMiddleware.fs" />  
     <Compile Include="Functions.fs" />
-    <Compile Include="Telemetry.fs" />
+    <Compile Include="Telemetry.fs" />    
     <Compile Include="Startup.fs" />
   </ItemGroup>
 

@@ -19,10 +19,19 @@ module HttpRequestExtensions =
     open System
     open System.IO
     open Microsoft.AspNetCore.Http
+    open Microsoft.Extensions.DependencyInjection
+    open Microsoft.Extensions.Configuration
     open Newtonsoft.Json
     open FsToolkit.ErrorHandling
 
     type HttpRequest with
+
+        member this.IsLocalEnvironment() =
+            this
+                .HttpContext
+                .RequestServices
+                .GetRequiredService<IConfiguration>()
+                .GetValue<string>("ASPNETCORE_ENVIRONMENT") = "Local"
 
         member this.TryGetBearerToken() =
             this.Headers
