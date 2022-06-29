@@ -10,6 +10,8 @@ type Startup() =
 
     override this.Configure(builder: IFunctionsHostBuilder) =
 
+        let configuration = builder.GetContext().Configuration
+
         builder
             .Services
             .AddOptions<GreeterOptions>()
@@ -21,6 +23,10 @@ type Startup() =
             .AddSingleton<ITelemetryInitializer, CloudRoleVersionInitializer>()
             .AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
         |> ignore
+
+        if configuration.GetValue<bool> "ENABLE_DETAILED_SQL_TELEMETRY" then
+            builder.Services.AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
+            |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]
 do ()

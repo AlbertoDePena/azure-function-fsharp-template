@@ -20,6 +20,13 @@ type CloudRoleVersionInitializer() =
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                     .InformationalVersion
 
+type CloudRoleNameInitializer() =
+
+    interface ITelemetryInitializer with
+
+        member this.Initialize(telemetry: ITelemetry) = 
+            telemetry.Context.Cloud.RoleName <- "azure-function-template"
+
 type SqlTelemetryInitializer() =
 
     interface ITelemetryInitializer with

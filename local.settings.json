@@ -4,6 +4,7 @@
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
         "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+        "ENABLE_DETAILED_SQL_TELEMETRY": "true",        
         "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
         "Greeter:Message": "Hello World!"
     }

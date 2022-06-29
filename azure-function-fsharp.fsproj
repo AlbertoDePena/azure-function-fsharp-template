@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Compile Include="Constants.fs" />
-    <Compile Include="ConfigurationOptions.fs" />
+    <Compile Include="Options.fs" />
     <Compile Include="Extensions.fs" />    
     <Compile Include="Functions.fs" />
     <Compile Include="Telemetry.fs" />
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <None Include="host.json">
-	<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>		
   </ItemGroup>
 

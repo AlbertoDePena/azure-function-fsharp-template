@@ -14,7 +14,7 @@ type Greeter(greeterOptions: IOptions<GreeterOptions>) =
     [<FunctionName("SayHello")>]
     member this.SayHello
         (
-            [<HttpTrigger(AuthorizationLevel.Function, HttpMethod.Get)>] request: HttpRequest,
+            [<HttpTrigger(AuthorizationLevel.Function, HttpMethod.Get)>] httpRequest: HttpRequest,
             logger: ILogger
         ) =
 
