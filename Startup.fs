@@ -21,7 +21,7 @@ type Startup() =
         builder
             .Services
             .AddSingleton<ITelemetryInitializer, CloudRoleNameInitializer>()
-            .AddSingleton<ITelemetryInitializer, CloudRoleVersionInitializer>()  
+            .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()  
         |> ignore
 
         if configuration.GetValue<bool> "ENABLE_SQL_TELEMETRY" then

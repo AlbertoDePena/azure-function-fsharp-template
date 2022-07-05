@@ -7,7 +7,7 @@ open Microsoft.ApplicationInsights.Channel
 open Microsoft.ApplicationInsights.DataContracts
 open Microsoft.Data.SqlClient
 
-type CloudRoleVersionInitializer() =
+type ComponentVersionInitializer() =
 
     interface ITelemetryInitializer with
 
@@ -15,7 +15,7 @@ type CloudRoleVersionInitializer() =
             telemetry.Context.Component.Version <-
                 Assembly
                     .GetAssembly(
-                        typeof<CloudRoleVersionInitializer>
+                        typeof<ComponentVersionInitializer>
                     )
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                     .InformationalVersion
