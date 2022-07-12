@@ -4,7 +4,7 @@ open System
 open Dapper
 
 [<RequireQualifiedAccess>]
-module OptionTypes =
+module OptionTypeHandler =
 
     type private OptionHandler<'T>() =
         inherit SqlMapper.TypeHandler<option<'T>>()

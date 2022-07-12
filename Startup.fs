@@ -12,7 +12,7 @@ type Startup() =
 
         let configuration = builder.GetContext().Configuration
 
-        OptionTypes.register ()
+        OptionTypeHandler.register ()
 
         builder
             .Services
