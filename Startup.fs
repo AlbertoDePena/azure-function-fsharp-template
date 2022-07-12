@@ -12,6 +12,8 @@ type Startup() =
 
         let configuration = builder.GetContext().Configuration
 
+        OptionTypes.register ()
+
         builder
             .Services
             .AddOptions<ApplicationOptions>()
