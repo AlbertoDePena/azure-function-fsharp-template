@@ -10,6 +10,9 @@ open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
+open azure_function_fsharp.Extensions
+open azure_function_fsharp.Options
+
 type FunctionsMiddleware
     (
         logger: ILogger<FunctionsMiddleware>,

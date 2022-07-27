@@ -9,6 +9,9 @@ open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Options
 
+open azure_function_fsharp.Constants
+open azure_function_fsharp.Options
+
 type Greeter(applicationOptions: IOptions<ApplicationOptions>, functionsMiddleware: FunctionsMiddleware) =
 
     [<FunctionName("SayHello")>]

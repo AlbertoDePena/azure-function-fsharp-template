@@ -1,7 +1,21 @@
-namespace azure_function_fsharp
+namespace azure_function_fsharp.DataAccess
 
 open System
+open System.Data
+
 open Dapper
+
+open Microsoft.Data.SqlClient
+
+[<RequireQualifiedAccess>]
+module DbConnection =
+
+    /// <exception cref="System.ArgumentException"></exception>
+    let create (connectionString: string) =
+        if String.IsNullOrWhiteSpace connectionString then
+            invalidArg "dbConnectionString" "Database connection string cannot be null or empty"
+        else
+            new SqlConnection(connectionString) :> IDbConnection
 
 [<RequireQualifiedAccess>]
 module OptionTypeHandler =

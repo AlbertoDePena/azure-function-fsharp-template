@@ -1,4 +1,4 @@
-namespace azure_function_fsharp
+namespace azure_function_fsharp.Constants
 
 [<RequireQualifiedAccess>]
 module HttpMethod =

@@ -1,4 +1,4 @@
-namespace azure_function_fsharp
+namespace azure_function_fsharp.Extensions
 
 [<AutoOpen>]
 module ClaimsPrincipalExtensions =

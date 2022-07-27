@@ -5,6 +5,10 @@ open Microsoft.ApplicationInsights.Extensibility
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Configuration
 
+open azure_function_fsharp.DataAccess
+open azure_function_fsharp.Options
+open azure_function_fsharp.Telemetry
+
 type Startup() =
     inherit FunctionsStartup()
 
