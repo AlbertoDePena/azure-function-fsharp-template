@@ -15,8 +15,7 @@ module ClaimsPrincipalExtensions =
                 None
 
 [<AutoOpen>]
-module HttpRequestExtensions =
-    open System
+module HttpRequestExtensions =    
     open System.IO
     open Microsoft.AspNetCore.Http
     open Microsoft.Extensions.DependencyInjection
@@ -61,27 +60,8 @@ module HttpRequestExtensions =
                 | true, value -> value.ToString() |> Some
                 | false, _ -> None
                 
-        member this.ReadJsonAsAsync<'a>() =
+        member this.TryReadJsonAsAsync<'a>() =
             use reader = new StreamReader(this.Body)
             reader.ReadToEndAsync()            
             |> Async.AwaitTask
-            |> Async.map (JsonConvert.DeserializeObject<'a>)
-
-        member this.ReadFormAsJson() =
-            let canonicalizeValue (value: string) =
-                if String.IsNullOrWhiteSpace value then null
-                elif value = "null" then null
-                else value
-
-            this.Form
-            |> Seq.map (fun item ->
-                (item.Key,
-                 item.Value
-                 |> Seq.tryHead
-                 |> Option.map canonicalizeValue
-                 |> Option.defaultValue null))
-            |> dict
-            |> JsonConvert.SerializeObject
-
-        member this.ReadFormAs<'a>() =
-            this.ReadFormAsJson() |> JsonConvert.DeserializeObject<'a>
+            |> Async.map (JsonConvert.DeserializeObject<'a> >> Option.ofNull)
