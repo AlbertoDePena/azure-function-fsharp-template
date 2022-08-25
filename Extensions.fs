@@ -40,7 +40,7 @@ module HttpRequestExtensions =
                     None
                 else
                     q.Value |> Seq.tryHead)
-            |> Option.filter (fun h -> h.Contains("Bearer"))
+            |> Option.filter (fun h -> h.Contains("Bearer "))
             |> Option.map (fun h -> h.Substring("Bearer ".Length).Trim())
 
         member this.TryGetQueryStringValue(name: string) =
