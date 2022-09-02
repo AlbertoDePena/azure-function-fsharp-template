@@ -9,7 +9,6 @@
 
         "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-        "Application:Message": "Hello World!",
-        "Application:LocalUserName": "albertodepena89@gmail.com"
+        "Application:Message": "Hello World!"
     }
 }

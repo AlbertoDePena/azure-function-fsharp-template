@@ -22,10 +22,7 @@ type FunctionsMiddleware
 
     /// <exception cref="InvalidOperationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
-        if httpRequest.IsLocalEnvironment() then
-            applicationOptions.Value.LocalUserName
-        else
-            invalidOp "The user name is not available in the HTTP request"
+        invalidOp "The user name is not available in the HTTP request"
 
     /// <summary>Executes the computation and functions as a top level error handler</summary>
     member this.Execute (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =
