@@ -23,7 +23,8 @@ type Greeter(applicationOptions: IOptions<ApplicationOptions>, functionsMiddlewa
 
         functionsMiddleware.Execute httpRequest (fun () ->
             async {
-                let correlationId = Guid.NewGuid().ToString()
+                let guid = Guid.NewGuid()
+                let correlationId = guid.ToString()
 
                 let message = applicationOptions.Value.Message
 

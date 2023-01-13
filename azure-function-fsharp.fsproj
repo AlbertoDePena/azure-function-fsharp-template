@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
-		<_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
-		<WarnOn>3390;$(WarnOn)</WarnOn>
+		<_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>		
+    <WarnOn>3390;$(WarnOn)</WarnOn>
+		<WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>

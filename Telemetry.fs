@@ -40,16 +40,18 @@ type SqlTelemetryInitializer() =
                     match dependencyTelemetry.TryGetOperationDetail("SqlCommand") with
                     | true, operationDetail ->
                         let sqlCommand = operationDetail :?> SqlCommand
+                        let commandType = sqlCommand.CommandType
+                        let commandTimeout = sqlCommand.CommandTimeout
 
                         dependencyTelemetry.Data <- sqlCommand.CommandText
 
                         dependencyTelemetry.Properties.Add(
                             nameof (sqlCommand.CommandType),
-                            sqlCommand.CommandType.ToString()
+                            commandType.ToString()
                         )
 
                         dependencyTelemetry.Properties.Add(
                             nameof (sqlCommand.CommandTimeout),
-                            sqlCommand.CommandTimeout.ToString()
+                            commandTimeout.ToString()
                         )
                     | _ -> ()
