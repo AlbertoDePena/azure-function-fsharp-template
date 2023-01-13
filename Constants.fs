@@ -14,3 +14,15 @@ module HttpMethod =
 
     [<Literal>]
     let Put = "PUT"
+
+[<RequireQualifiedAccess>]
+module LogEvent =
+    open Microsoft.Extensions.Logging
+
+    let InternalServerError = EventId(10000, "InternalServerError")
+
+    let DataAccessError = EventId(10002, "DataAccessError")
+
+    let AuthenticationError = EventId(10003, "AuthenticationError")
+
+    let AuthorizationError = EventId(10004, "AuthorizationError")

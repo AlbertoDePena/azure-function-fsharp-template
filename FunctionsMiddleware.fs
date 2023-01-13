@@ -10,7 +10,8 @@ open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.Extensions
+open azure_function_fsharp.Exceptions
+open azure_function_fsharp.Constants
 open azure_function_fsharp.Options
 
 type FunctionsMiddleware
@@ -22,7 +23,7 @@ type FunctionsMiddleware
 
     /// <exception cref="InvalidOperationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
-        invalidOp "The user name is not available in the HTTP request"
+        "azure-function-user"
 
     /// <summary>Executes the computation and functions as a top level error handler</summary>
     member this.Execute (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =
@@ -35,8 +36,18 @@ type FunctionsMiddleware
 
                     return actionResult
                 with
+                | :? AuthenticationException as ex ->
+                    logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
+
+                    return UnauthorizedResult() :> IActionResult
+
+                | :? DataAccessException as ex ->
+                    logger.LogError(LogEvent.DataAccessError, ex, ex.Message)
+
+                    return InternalServerErrorResult() :> IActionResult
+
                 | ex ->
-                    logger.LogError(ex, ex.Message)
+                    logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
 
                     return InternalServerErrorResult() :> IActionResult
             }

@@ -58,7 +58,7 @@ module HttpRequestExtensions =
                     values |> Seq.tryHead |> Option.filter (String.IsNullOrWhiteSpace >> not)
                 else None
                 
-        member this.TryReadAsAsync<'a>() =
+        member this.TryReadJsonAsAsync<'a>() =
             use reader = new StreamReader(this.Body)
             reader.ReadToEndAsync()            
             |> Async.AwaitTask

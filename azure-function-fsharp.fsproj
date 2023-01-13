@@ -14,6 +14,7 @@
     <Compile Include="Exceptions.fs" />  
     <Compile Include="Extensions.fs" />  
     <Compile Include="FunctionsMiddleware.fs" />  
+    <Compile Include="ObjectResults.fs" />	
     <Compile Include="Functions.fs" />
     <Compile Include="Telemetry.fs" />    
     <Compile Include="DataAccess.fs" />    
@@ -40,6 +41,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
+    <PackageReference Include="RT.Comb" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

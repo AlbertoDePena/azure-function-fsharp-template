@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "clean",
+			"label": "clean function app",
 			"command": "dotnet",
 			"args": [
 				"clean",
@@ -14,7 +14,7 @@
 			"problemMatcher": "$msCompile"
 		},
 		{
-			"label": "build",
+			"label": "build function app",
 			"command": "dotnet",
 			"args": [
 				"build",
@@ -23,7 +23,7 @@
 			],
 			// shell in Linux, process in Windows
 			"type": "shell",
-			"dependsOn": "clean",
+			"dependsOn": "clean function app",
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -31,7 +31,7 @@
 			"problemMatcher": "$msCompile"
 		},
         {
-			"label": "func",
+			"label": "run function app",
 			"command": "func",
             "args": [
                 "host",
@@ -42,7 +42,7 @@
 			},			
 			// shell in Linux, process in Windows
 			"type": "shell",
-			"dependsOn": "build",
+			"dependsOn": "build function app",
 			"problemMatcher": "$msCompile"
 		}
 	]
