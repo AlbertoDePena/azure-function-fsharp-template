@@ -6,7 +6,6 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Configuration
 
 open azure_function_fsharp.DataAccess
-open azure_function_fsharp.Options
 open azure_function_fsharp.Telemetry
 
 type Startup() =
@@ -14,15 +13,10 @@ type Startup() =
 
     override this.Configure(builder: IFunctionsHostBuilder) =
 
-        let configuration = builder.GetContext().Configuration
-
+        DotEnv.init ()
         OptionTypeHandler.register ()
 
-        builder
-            .Services
-            .AddOptions<ApplicationOptions>()
-            .Configure<IConfiguration>(fun settings configuration -> configuration.GetSection("Application").Bind(settings))
-        |> ignore
+        let configuration = builder.GetContext().Configuration
 
         builder
             .Services

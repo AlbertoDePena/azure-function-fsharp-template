@@ -7,12 +7,11 @@ open Microsoft.Azure.WebJobs.Extensions.Http
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Mvc
-open Microsoft.Extensions.Options
+open Microsoft.Extensions.Configuration
 
 open azure_function_fsharp.Constants
-open azure_function_fsharp.Options
 
-type Greeter(applicationOptions: IOptions<ApplicationOptions>, functionsMiddleware: FunctionsMiddleware) =
+type Greeter(configuration: IConfiguration, functionsMiddleware: FunctionsMiddleware) =
 
     [<FunctionName("SayHello")>]
     member this.SayHello
@@ -26,7 +25,7 @@ type Greeter(applicationOptions: IOptions<ApplicationOptions>, functionsMiddlewa
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 
-                let message = applicationOptions.Value.Message
+                let message = configuration.GetValue<string>("Application_Message")
 
                 logger.LogDebug("what it do? {CorrelationId}", correlationId)
 

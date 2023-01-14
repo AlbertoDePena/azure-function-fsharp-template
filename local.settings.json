@@ -9,6 +9,6 @@
 
         "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-        "Application:Message": "Hello World!"
+        "Application_Message": "Hello World!"
     }
 }

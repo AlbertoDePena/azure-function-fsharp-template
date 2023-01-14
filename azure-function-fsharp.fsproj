@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Constants.fs" />
-    <Compile Include="Options.fs" />
+    <Compile Include="DotEnv.fs" />    
+    <Compile Include="Constants.fs" />    
     <Compile Include="Exceptions.fs" />  
     <Compile Include="Extensions.fs" />  
     <Compile Include="FunctionsMiddleware.fs" />  

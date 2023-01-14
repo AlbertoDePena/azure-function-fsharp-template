@@ -6,19 +6,16 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open Microsoft.ApplicationInsights
-open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
 open azure_function_fsharp.Exceptions
 open azure_function_fsharp.Constants
-open azure_function_fsharp.Options
 
 type FunctionsMiddleware
     (
         logger: ILogger<FunctionsMiddleware>,
-        telemetryClient: TelemetryClient,
-        applicationOptions: IOptions<ApplicationOptions>
+        telemetryClient: TelemetryClient
     ) =
 
     /// <exception cref="InvalidOperationException"></exception>
