@@ -12,9 +12,9 @@ open FsToolkit.ErrorHandling
 open azure_function_fsharp.Exceptions
 open azure_function_fsharp.Constants
 
-type FunctionsMiddleware
+type ErrorHandler
     (
-        logger: ILogger<FunctionsMiddleware>,
+        logger: ILogger<ErrorHandler>,
         telemetryClient: TelemetryClient
     ) =
 
@@ -23,11 +23,14 @@ type FunctionsMiddleware
         "azure-function-user"
 
     /// <summary>Executes the computation and functions as a top level error handler</summary>
-    member this.Execute (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =
+    member this.Handle (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =
         let computation =
             async {
                 try
-                    telemetryClient.Context.User.AuthenticatedUserId <- (this.GetUserName httpRequest)
+                    let userName = this.GetUserName httpRequest
+                    
+                    telemetryClient.Context.User.AuthenticatedUserId <- userName
+                    telemetryClient.GetMetric(MetricName.AuthenticatedUsers, DimensionName.UserName).TrackValue(1, userName) |> ignore
 
                     let! actionResult = computation ()
 

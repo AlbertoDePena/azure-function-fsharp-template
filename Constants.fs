@@ -26,3 +26,18 @@ module LogEvent =
     let AuthenticationError = EventId(10003, "AuthenticationError")
 
     let AuthorizationError = EventId(10004, "AuthorizationError")
+
+[<RequireQualifiedAccess>]
+module MetricName =
+
+    [<Literal>]
+    let AuthenticatedUsers = "MyApp.AuthenticatedUsers"
+
+    [<Literal>]
+    let SayHello = "MyApp.SayHello"
+
+[<RequireQualifiedAccess>]
+module DimensionName =
+
+    [<Literal>]
+    let UserName = "MyApp.UserName"

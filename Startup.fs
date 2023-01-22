@@ -13,7 +13,6 @@ type Startup() =
 
     override this.Configure(builder: IFunctionsHostBuilder) =
 
-        DotEnv.init ()
         OptionTypeHandler.register ()
 
         let configuration = builder.GetContext().Configuration
@@ -28,7 +27,7 @@ type Startup() =
             builder.Services.AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
             |> ignore
 
-        builder.Services.AddTransient<FunctionsMiddleware>()
+        builder.Services.AddTransient<ErrorHandler>()
         |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]
