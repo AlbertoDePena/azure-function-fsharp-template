@@ -58,21 +58,3 @@ module OptionTypeHandler =
 
     /// Register Dapper type handler for the optional values type: option<T>
     let register () = singleton.Force()
-
-[<RequireQualifiedAccess>]
-module UniqueId =
-    open RT.Comb
-
-    let create () = Provider.Sql.Create()    
-
-[<RequireQualifiedAccess>]
-module EmailAddress =
-    open System.Text.RegularExpressions
-
-    let private emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")
-
-    let fromString (value: string) =
-        if emailRegex.Match(value).Success then
-            value.ToLower() |> Some
-        else
-            None    
