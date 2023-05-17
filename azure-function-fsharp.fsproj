@@ -15,7 +15,7 @@
     <Compile Include="Extensions.fs" />  
     <Compile Include="ErrorHandler.fs" />  
     <Compile Include="ObjectResults.fs" />	
-    <Compile Include="Functions.fs" />
+    <Compile Include="SayHello.fs" />
     <Compile Include="Telemetry.fs" />    
     <Compile Include="DataAccess.fs" />    
     <Compile Include="Startup.fs" />

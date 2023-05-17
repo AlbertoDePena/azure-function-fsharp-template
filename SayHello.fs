@@ -12,13 +12,12 @@ open Microsoft.ApplicationInsights
 
 open azure_function_fsharp.Constants
 
-type Greeter(configuration: IConfiguration, errorHandler: ErrorHandler, telemetryClient: TelemetryClient) =
+type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHandler: ErrorHandler, telemetryClient: TelemetryClient) =
 
-    [<FunctionName("SayHello")>]
-    member this.SayHello
+    [<FunctionName(nameof SayHello)>]
+    member this.Run
         (
-            [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest,
-            logger: ILogger
+            [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest            
         ) =
 
         errorHandler.Handle httpRequest (fun () ->
@@ -26,7 +25,7 @@ type Greeter(configuration: IConfiguration, errorHandler: ErrorHandler, telemetr
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 
-                let message = configuration.GetValue<string>("Application_Message")
+                let message = configuration.GetValue<string>(ConfigurationName.APPLICATION_MESSAGE)
 
                 telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
 

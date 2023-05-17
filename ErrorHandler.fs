@@ -18,7 +18,7 @@ type ErrorHandler
         telemetryClient: TelemetryClient
     ) =
 
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
         "azure-function-user"
 
@@ -30,8 +30,7 @@ type ErrorHandler
                     let userName = this.GetUserName httpRequest
                     
                     telemetryClient.Context.User.AuthenticatedUserId <- userName
-                    telemetryClient.GetMetric(MetricName.AuthenticatedUsers, DimensionName.UserName).TrackValue(1, userName) |> ignore
-
+                    
                     let! actionResult = computation ()
 
                     return actionResult
@@ -40,6 +39,11 @@ type ErrorHandler
                     logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
 
                     return UnauthorizedResult() :> IActionResult
+
+                | :? AuthorizationException as ex ->
+                    logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
+
+                    return ForbidResult() :> IActionResult
 
                 | :? DataAccessException as ex ->
                     logger.LogError(LogEvent.DataAccessError, ex, ex.Message)

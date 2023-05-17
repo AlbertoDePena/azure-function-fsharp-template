@@ -2,6 +2,11 @@ namespace azure_function_fsharp.Exceptions
 
 open System
 
+/// An exception wrapper for any authorization operation to make authorization exception handling implementation agnostic
+type AuthorizationException(ex: Exception) =
+    inherit Exception(ex.Message, ex)
+    new(message: string) = AuthorizationException(Exception message)
+    
 /// An exception wrapper for any authentication operation to make authentication exception handling implementation agnostic
 type AuthenticationException(ex: Exception) =
     inherit Exception(ex.Message, ex)

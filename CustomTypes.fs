@@ -10,11 +10,13 @@ module EmailAddress =
 
     let private emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")
 
+    let isValid (x: string) = emailRegex.Match(x).Success
+
     let value (EmailAddress x) = x
 
-    let tryCreate (value: string) =
-        if emailRegex.Match(value).Success then
-            value.ToLower() |> EmailAddress |> Some
+    let tryCreate (x: string) =
+        if isValid x then
+            x.ToLower() |> EmailAddress |> Some
         else
             None
 
@@ -24,11 +26,13 @@ type NaturalNumber = private NaturalNumber of int
 [<RequireQualifiedAccess>]
 module NaturalNumber =
     
+    let isValid (x: int) = x >= 0
+
     let value (NaturalNumber x) = x
 
-    let tryCreate (value: int) =
-        if value >= 0 then
-            value |> NaturalNumber |> Some
+    let tryCreate (x: int) =
+        if isValid x then
+            x |> NaturalNumber |> Some
         else
             None
 
@@ -38,11 +42,13 @@ type NaturalDecimalNumber = private NaturalDecimalNumber of decimal
 [<RequireQualifiedAccess>]
 module NaturalDecimalNumber =
     
+    let isValid (x: decimal) =  x >= 0.0M
+
     let value (NaturalDecimalNumber x) = x
 
-    let tryCreate (value: decimal) =
-        if value >= 0.0M then
-            value |> NaturalDecimalNumber |> Some
+    let tryCreate (x: decimal) =
+        if isValid x then
+            x |> NaturalDecimalNumber |> Some
         else
             None            
 
@@ -52,11 +58,13 @@ type PositiveNumber = private PositiveNumber of int
 [<RequireQualifiedAccess>]
 module PositiveNumber =
     
+    let isValid (x: int) = x > 0
+
     let value (PositiveNumber x) = x
 
-    let tryCreate (value: int) =
-        if value > 0 then
-            value |> PositiveNumber |> Some
+    let tryCreate (x: int) =
+        if isValid x then
+            x |> PositiveNumber |> Some
         else
             None
 
@@ -66,11 +74,13 @@ type PositiveDecimalNumber = private PositiveDecimalNumber of decimal
 [<RequireQualifiedAccess>]
 module PositiveDecimalNumber =
     
+    let isValid (x: decimal) = x > 0M
+
     let value (PositiveDecimalNumber x) = x
 
-    let tryCreate (value: decimal) =
-        if value > 0M then
-            value |> PositiveDecimalNumber |> Some
+    let tryCreate (x: decimal) =
+        if isValid x then
+            x |> PositiveDecimalNumber |> Some
         else
             None
 
@@ -79,13 +89,15 @@ type Text = private Text of string
 [<RequireQualifiedAccess>]
 module Text =
 
+    let isValid (x: string) = String.IsNullOrWhiteSpace x |> not
+
     let value (Text x) = x
 
-    let tryCreate (value: string) =
-        if String.IsNullOrWhiteSpace value then
-            None
+    let tryCreate (x: string) =
+        if isValid x then
+            x.Trim() |> Text |> Some
         else
-            value.Trim() |> Text |> Some
+            None
 
 type UniqueId = private UniqueId of Guid
 
@@ -93,12 +105,14 @@ type UniqueId = private UniqueId of Guid
 module UniqueId =
     open RT.Comb
 
+    let isValid (x: Guid) = x <> Guid.Empty
+
     let value (UniqueId x) = x
 
     let create () = Provider.Sql.Create() |> UniqueId
 
-    let tryCreate (value: Guid) =
-        if value = Guid.Empty then
-            None
+    let tryCreate (x: Guid) =
+        if isValid x then
+            x |> UniqueId |> Some
         else
-            value |> UniqueId |> Some
+            None

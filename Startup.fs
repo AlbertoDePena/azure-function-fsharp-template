@@ -5,6 +5,7 @@ open Microsoft.ApplicationInsights.Extensibility
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Configuration
 
+open azure_function_fsharp.Constants
 open azure_function_fsharp.DataAccess
 open azure_function_fsharp.Telemetry
 
@@ -23,7 +24,7 @@ type Startup() =
             .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()  
         |> ignore
 
-        if configuration.GetValue<bool> "ENABLE_SQL_TELEMETRY" then
+        if configuration.GetValue<bool> ConfigurationName.ENABLE_SQL_TELEMETRY then
             builder.Services.AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
             |> ignore
 

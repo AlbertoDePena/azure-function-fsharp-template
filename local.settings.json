@@ -1,14 +1,14 @@
 {
-    "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-        "ASPNETCORE_ENVIRONMENT": "Local",
-        "ENABLE_SQL_TELEMETRY": true,
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+    "ASPNETCORE_ENVIRONMENT": "Local",
+    "ENABLE_SQL_TELEMETRY": true,
 
-        "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
+    "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-        "Application_Message": "Hello World!"
-    }
+    "APPLICATION_MESSAGE": "Hello World!"
+  }
 }

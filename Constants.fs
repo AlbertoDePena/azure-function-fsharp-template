@@ -1,6 +1,21 @@
 namespace azure_function_fsharp.Constants
 
 [<RequireQualifiedAccess>]
+module ConfigurationName =
+
+    [<Literal>]
+    let APPLICATION_MESSAGE = "APPLICATION_MESSAGE"
+
+    [<Literal>]
+    let ENABLE_SQL_TELEMETRY = "ENABLE_SQL_TELEMETRY"
+    
+[<RequireQualifiedAccess>]
+module DimensionName =
+
+    [<Literal>]
+    let UserName = "MyApp.UserName"
+
+[<RequireQualifiedAccess>]
 module HttpMethod =
 
     [<Literal>]
@@ -19,25 +34,16 @@ module HttpMethod =
 module LogEvent =
     open Microsoft.Extensions.Logging
 
-    let InternalServerError = EventId(10000, "InternalServerError")
+    let DataAccessError = EventId(10000, "DataAccessError")
 
-    let DataAccessError = EventId(10002, "DataAccessError")
+    let AuthenticationError = EventId(10401, "AuthenticationError")
 
-    let AuthenticationError = EventId(10003, "AuthenticationError")
+    let AuthorizationError = EventId(10403, "AuthorizationError")
 
-    let AuthorizationError = EventId(10004, "AuthorizationError")
+    let InternalServerError = EventId(10500, "InternalServerError")
 
 [<RequireQualifiedAccess>]
 module MetricName =
 
     [<Literal>]
-    let AuthenticatedUsers = "MyApp.AuthenticatedUsers"
-
-    [<Literal>]
     let SayHello = "MyApp.SayHello"
-
-[<RequireQualifiedAccess>]
-module DimensionName =
-
-    [<Literal>]
-    let UserName = "MyApp.UserName"
