@@ -41,3 +41,16 @@ module DimensionName =
 
     [<Literal>]
     let UserName = "MyApp.UserName"
+
+[<RequireQualifiedAccess>]
+module Logging =
+
+    /// Template for consisted structured logging accross multiple functions, each field is described below: 
+    /// EntityType: Business Entity Type being processed: e.g. Invoice, Shipment, etc.
+    /// EntityId: Id of the Business Entity being processed: e.g. Invoice Number, Shipment Id, etc. 
+    /// Status: Status of the Log Event, e.g. Succeeded, Failed, Discarded.
+    /// CheckPoint: To classify and be able to correlate tracking events, e.g. Publisher, Subscriber.
+    /// CorrelationId: Unique identifier of the message that can be processed by more than one component. 
+    /// Description: A detailed description of the log event. 
+    [<Literal>]
+    let Template = "{EntityType}, {EntityId}, {Status}, {CheckPoint}, {CorrelationId}, {Description}"

@@ -63,3 +63,4 @@ module HttpRequestExtensions =
             reader.ReadToEndAsync()            
             |> Async.AwaitTask
             |> Async.map (JsonConvert.DeserializeObject<'a> >> Option.ofNull)
+

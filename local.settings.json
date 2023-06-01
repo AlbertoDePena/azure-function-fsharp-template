@@ -3,7 +3,7 @@
     "Values": {
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "fca7a667-da93-4b1d-9671-8563e56c902b",
         "ASPNETCORE_ENVIRONMENT": "Local",
         "ENABLE_SQL_TELEMETRY": true,
 
