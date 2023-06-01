@@ -25,7 +25,7 @@ type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHan
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 
-                let message = configuration.GetValue<string>(ConfigurationName.APPLICATION_MESSAGE)
+                let message = configuration.GetValue<string>(ConfigurationKey.APPLICATION_MESSAGE)
 
                 telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
 

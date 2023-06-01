@@ -1,7 +1,7 @@
 namespace azure_function_fsharp.Constants
 
 [<RequireQualifiedAccess>]
-module ConfigurationName =
+module ConfigurationKey =
 
     [<Literal>]
     let APPLICATION_MESSAGE = "APPLICATION_MESSAGE"
