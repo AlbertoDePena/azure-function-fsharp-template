@@ -41,6 +41,11 @@ type ErrorHandler
 
                     return UnauthorizedResult() :> IActionResult
 
+                | :? AuthorizationException as ex ->
+                    logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
+
+                    return ForbidResult() :> IActionResult
+
                 | :? DataAccessException as ex ->
                     logger.LogError(LogEvent.DataAccessError, ex, ex.Message)
 

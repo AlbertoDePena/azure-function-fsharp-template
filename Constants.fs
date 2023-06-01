@@ -19,13 +19,13 @@ module HttpMethod =
 module LogEvent =
     open Microsoft.Extensions.Logging
 
-    let InternalServerError = EventId(10000, "InternalServerError")
+    let DataAccessError = EventId(10000, "DataAccessError")
+    
+    let AuthenticationError = EventId(10401, "AuthenticationError")
 
-    let DataAccessError = EventId(10002, "DataAccessError")
+    let AuthorizationError = EventId(10403, "AuthorizationError")
 
-    let AuthenticationError = EventId(10003, "AuthenticationError")
-
-    let AuthorizationError = EventId(10004, "AuthorizationError")
+    let InternalServerError = EventId(10500, "InternalServerError")
 
 [<RequireQualifiedAccess>]
 module MetricName =
