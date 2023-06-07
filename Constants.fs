@@ -4,10 +4,10 @@ namespace azure_function_fsharp.Constants
 module ConfigurationKey =
 
     [<Literal>]
-    let APPLICATION_MESSAGE = "APPLICATION_MESSAGE"
+    let APPLICATION_MESSAGE = "MY_APP_APPLICATION_MESSAGE"
 
     [<Literal>]
-    let ENABLE_SQL_TELEMETRY = "ENABLE_SQL_TELEMETRY"
+    let DB_CONNECTION_STRING = "MY_APP_DB_CONNECTION_STRING"
     
 [<RequireQualifiedAccess>]
 module DimensionName =

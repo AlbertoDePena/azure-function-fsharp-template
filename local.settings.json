@@ -3,12 +3,11 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "ASPNETCORE_ENVIRONMENT": "Local",
-    "ENABLE_SQL_TELEMETRY": true,
-
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "7d945855-da70-41fe-a6b2-53bc73642252",
+    
     "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-    "APPLICATION_MESSAGE": "Hello World!"
+    "MY_APP_APPLICATION_MESSAGE": "Hello World!",
+    "MY_APP_DB_CONNECTION_STRING": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyAppDatabase;Trusted_Connection=True;"
   }
 }

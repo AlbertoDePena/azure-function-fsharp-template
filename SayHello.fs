@@ -10,9 +10,19 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Configuration
 open Microsoft.ApplicationInsights
 
+
+open System.Data
+open azure_function_fsharp.Exceptions
+open Dapper
+open FsToolkit.ErrorHandling
+
+open azure_function_fsharp.DataAccess
 open azure_function_fsharp.Constants
 
 type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHandler: ErrorHandler, telemetryClient: TelemetryClient) =
+
+    let createDbConnection =
+        (fun () -> configuration.GetValue<string> ConfigurationKey.DB_CONNECTION_STRING |> DbConnection.create)
 
     [<FunctionName(nameof SayHello)>]
     member this.Run

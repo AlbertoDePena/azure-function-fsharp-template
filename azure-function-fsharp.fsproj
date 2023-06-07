@@ -13,11 +13,11 @@
     <Compile Include="Constants.fs" />    
     <Compile Include="Exceptions.fs" />  
     <Compile Include="Extensions.fs" />  
+    <Compile Include="DataAccess.fs" />  
     <Compile Include="ErrorHandler.fs" />  
     <Compile Include="ObjectResults.fs" />	
     <Compile Include="SayHello.fs" />
     <Compile Include="Telemetry.fs" />    
-    <Compile Include="DataAccess.fs" />    
     <Compile Include="Startup.fs" />
   </ItemGroup>
 

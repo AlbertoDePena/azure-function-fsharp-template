@@ -24,10 +24,6 @@ type Startup() =
             .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()  
         |> ignore
 
-        if configuration.GetValue<bool> ConfigurationKey.ENABLE_SQL_TELEMETRY then
-            builder.Services.AddSingleton<ITelemetryInitializer, SqlTelemetryInitializer>()
-            |> ignore
-
         builder.Services.AddTransient<ErrorHandler>()
         |> ignore
 
