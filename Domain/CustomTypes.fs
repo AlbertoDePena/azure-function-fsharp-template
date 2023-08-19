@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.CustomTypes
+namespace azure_function_fsharp.Domain.CustomTypes
 
 open System
 

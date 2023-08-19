@@ -1,4 +1,4 @@
-﻿namespace azure_function_fsharp
+﻿namespace azure_function_fsharp.HttpTriggers.SayHello
 
 open System
 
@@ -10,14 +10,14 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Configuration
 open Microsoft.ApplicationInsights
 
-
 open System.Data
-open azure_function_fsharp.Exceptions
+open azure_function_fsharp.Infrastructure.Exceptions
 open Dapper
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.DataAccess
-open azure_function_fsharp.Constants
+open azure_function_fsharp.Infrastructure.DbConnection
+open azure_function_fsharp.Infrastructure.Constants
+open azure_function_fsharp.Infrastructure.ErrorHandler
 
 type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHandler: ErrorHandler, telemetryClient: TelemetryClient) =
 

@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Telemetry
+namespace azure_function_fsharp.Infrastructure.Telemetry
 
 open System.Reflection
 

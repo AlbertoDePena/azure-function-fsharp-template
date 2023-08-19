@@ -9,15 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>    
-    <Compile Include="CustomTypes.fs" />    
-    <Compile Include="Constants.fs" />    
-    <Compile Include="Exceptions.fs" />  
-    <Compile Include="Extensions.fs" />  
-    <Compile Include="DataAccess.fs" />  
-    <Compile Include="ErrorHandler.fs" />  
-    <Compile Include="ObjectResults.fs" />	
-    <Compile Include="SayHello.fs" />
-    <Compile Include="Telemetry.fs" />    
+    <Compile Include="Domain/CustomTypes.fs" />    
+    <Compile Include="Infrastructure/Constants.fs" />  
+    <Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs"/>
+    <Compile Include="Infrastructure/HttpRequestExtensions.fs"/>
+    <Compile Include="Infrastructure/DbConnection.fs" />
+    <Compile Include="Infrastructure/Dapper.fs" />
+    <Compile Include="Infrastructure/Exceptions.fs" />
+    <Compile Include="Infrastructure/ObjectResults.fs" />	
+    <Compile Include="Infrastructure/ErrorHandler.fs" />  
+    <Compile Include="Infrastructure/Telemetry.fs" />    
+    <Compile Include="HttpTriggers/SayHello.fs" />
     <Compile Include="Startup.fs" />
   </ItemGroup>
 

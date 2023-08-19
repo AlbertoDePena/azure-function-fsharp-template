@@ -1,4 +1,4 @@
-namespace azure_function_fsharp
+namespace azure_function_fsharp.Infrastructure.ErrorHandler
 
 open System.Web.Http
 
@@ -9,8 +9,8 @@ open Microsoft.ApplicationInsights
 
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.Exceptions
-open azure_function_fsharp.Constants
+open azure_function_fsharp.Infrastructure.Exceptions
+open azure_function_fsharp.Infrastructure.Constants
 
 type ErrorHandler
     (

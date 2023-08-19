@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Constants
+namespace azure_function_fsharp.Infrastructure.Constants
 
 [<RequireQualifiedAccess>]
 module ConfigurationKey =

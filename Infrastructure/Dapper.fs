@@ -1,21 +1,8 @@
-namespace azure_function_fsharp.DataAccess
-
-open System
+namespace azure_function_fsharp.Infrastructure.Dapper
 
 [<RequireQualifiedAccess>]
-module DbConnection =
-    open System.Data
-    open Microsoft.Data.SqlClient
-
-    /// <exception cref="System.ArgumentException"></exception>
-    let create (dbConnectionString: string) =
-        if String.IsNullOrWhiteSpace dbConnectionString then
-            invalidArg "dbConnectionString" "Database connection string cannot be null or empty"
-        else
-            new SqlConnection(dbConnectionString) :> IDbConnection
-
-[<RequireQualifiedAccess>]
-module OptionTypeHandler =
+module Dapper =
+    open System
     open Dapper
 
     type private OptionHandler<'T>() =
@@ -56,5 +43,5 @@ module OptionTypeHandler =
              SqlMapper.AddTypeHandler(OptionHandler<bool>())
              SqlMapper.AddTypeHandler(OptionHandler<TimeSpan>()))
 
-    /// Register Dapper type handler for the optional values type: option<T>
-    let register () = singleton.Force()
+    /// Register Dapper type handler for the optional values type: option<'T>
+    let registerOptionType () = singleton.Force()
