@@ -17,7 +17,7 @@
     <Compile Include="Infrastructure/Dapper.fs" />
     <Compile Include="Infrastructure/Exceptions.fs" />
     <Compile Include="Infrastructure/ObjectResults.fs" />	
-    <Compile Include="Infrastructure/ErrorHandler.fs" />  
+    <Compile Include="Infrastructure/HttpRequestHandler.fs" />  
     <Compile Include="Infrastructure/Telemetry.fs" />    
     <Compile Include="HttpTriggers/SayHello.fs" />
     <Compile Include="Startup.fs" />

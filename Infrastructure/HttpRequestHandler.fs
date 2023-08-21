@@ -12,15 +12,18 @@ open FsToolkit.ErrorHandling
 open azure_function_fsharp.Infrastructure.Exceptions
 open azure_function_fsharp.Infrastructure.Constants
 
-type ErrorHandler
+type HttpRequestHandler
     (
-        logger: ILogger<ErrorHandler>,
+        logger: ILogger<HttpRequestHandler>,
         telemetryClient: TelemetryClient
     ) =
 
     /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
-        "azure-function-user"
+        try
+            "azure-function-user"
+        with ex ->
+            AuthenticationException (ex) |> raise
 
     /// <summary>Executes the computation and functions as a top level error handler</summary>
     member this.Handle (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =

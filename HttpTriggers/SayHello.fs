@@ -19,7 +19,7 @@ open azure_function_fsharp.Infrastructure.DbConnection
 open azure_function_fsharp.Infrastructure.Constants
 open azure_function_fsharp.Infrastructure.ErrorHandler
 
-type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHandler: ErrorHandler, telemetryClient: TelemetryClient) =
+type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, httpRequestHandler: HttpRequestHandler, telemetryClient: TelemetryClient) =
 
     let createDbConnection =
         (fun () -> configuration.GetValue<string> ConfigurationKey.DB_CONNECTION_STRING |> DbConnection.create)
@@ -30,7 +30,7 @@ type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, errorHan
             [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest            
         ) =
 
-        errorHandler.Handle httpRequest (fun () ->
+        httpRequestHandler.Handle httpRequest (fun () ->
             async {
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()

@@ -26,7 +26,7 @@ type Startup() =
             .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()  
         |> ignore
 
-        builder.Services.AddTransient<ErrorHandler>()
+        builder.Services.AddTransient<HttpRequestHandler>()
         |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]
