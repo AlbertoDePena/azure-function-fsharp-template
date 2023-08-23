@@ -1,6 +1,31 @@
 namespace azure_function_fsharp.Infrastructure.Constants
 
 [<RequireQualifiedAccess>]
+module ClaimType =
+
+    [<Literal>]
+    let EmailAddress =
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+
+    [<Literal>]
+    let Role = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+
+    [<Literal>]
+    let Groups = "groups"
+
+[<RequireQualifiedAccess>]
+module ClaimValue =
+
+    [<Literal>]
+    let Administrator = "MyApp_Administrator"
+
+    [<Literal>]
+    let Editor = "MyApp_Editor"
+
+    [<Literal>]
+    let Viewer = "MyApp_Viewer"    
+
+[<RequireQualifiedAccess>]
 module ConfigurationKey =
 
     [<Literal>]
@@ -47,3 +72,5 @@ module MetricName =
 
     [<Literal>]
     let SayHello = "MyApp.SayHello"
+
+    

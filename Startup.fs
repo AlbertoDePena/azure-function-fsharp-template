@@ -9,7 +9,7 @@ open azure_function_fsharp.Infrastructure.Constants
 open azure_function_fsharp.Infrastructure.DbConnection
 open azure_function_fsharp.Infrastructure.Telemetry
 open azure_function_fsharp.Infrastructure.Dapper
-open azure_function_fsharp.Infrastructure.ErrorHandler
+open azure_function_fsharp.Infrastructure.HttpRequestHandler
 
 type Startup() =
     inherit FunctionsStartup()

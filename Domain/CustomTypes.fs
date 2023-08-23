@@ -114,3 +114,9 @@ type UniqueId =
 
     static member Create () = 
         RT.Comb.Provider.Sql.Create() |> UniqueId
+
+[<RequireQualifiedAccess>]
+type Role =
+    | Administrator
+    | Editor
+    | Viewer          

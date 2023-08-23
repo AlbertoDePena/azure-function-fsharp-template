@@ -17,7 +17,8 @@ open FsToolkit.ErrorHandling
 
 open azure_function_fsharp.Infrastructure.DbConnection
 open azure_function_fsharp.Infrastructure.Constants
-open azure_function_fsharp.Infrastructure.ErrorHandler
+open azure_function_fsharp.Domain.CustomTypes
+open azure_function_fsharp.Infrastructure.HttpRequestHandler
 
 type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, httpRequestHandler: HttpRequestHandler, telemetryClient: TelemetryClient) =
 
@@ -30,7 +31,7 @@ type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, httpRequ
             [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest            
         ) =
 
-        httpRequestHandler.Handle httpRequest (fun () ->
+        httpRequestHandler.Handle httpRequest [ Role.Viewer ] (fun () ->
             async {
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()

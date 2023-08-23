@@ -1,5 +1,6 @@
-namespace azure_function_fsharp.Infrastructure.ErrorHandler
+namespace azure_function_fsharp.Infrastructure.HttpRequestHandler
 
+open System.Net
 open System.Web.Http
 
 open Microsoft.AspNetCore.Http
@@ -11,12 +12,30 @@ open FsToolkit.ErrorHandling
 
 open azure_function_fsharp.Infrastructure.Exceptions
 open azure_function_fsharp.Infrastructure.Constants
+open azure_function_fsharp.Domain.CustomTypes
 
 type HttpRequestHandler
     (
         logger: ILogger<HttpRequestHandler>,
         telemetryClient: TelemetryClient
     ) =
+
+    member this.IsAuthorized (roles: Role list) (httpRequest: HttpRequest) =
+        if httpRequest.HttpContext.User.Identity.IsAuthenticated then
+            let roleClaims =
+                roles
+                |> List.map (fun role ->
+                    match role with
+                    | Role.Administrator -> ClaimValue.Administrator
+                    | Role.Editor -> ClaimValue.Editor
+                    | Role.Viewer -> ClaimValue.Viewer)
+
+            // All users have the implied Viewer role
+            roles |> List.contains Role.Viewer
+            || httpRequest.HttpContext.User.FindAll(fun claim -> claim.Type = ClaimType.Role)
+            |> Seq.exists (fun claim -> roleClaims |> List.contains claim.Value)
+        else
+            false
 
     /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
@@ -26,7 +45,7 @@ type HttpRequestHandler
             AuthenticationException (ex) |> raise
 
     /// <summary>Executes the computation and functions as a top level error handler</summary>
-    member this.Handle (httpRequest: HttpRequest) (computation: unit -> Async<IActionResult>) =
+    member this.Handle (httpRequest: HttpRequest) (roles: Role list) (computation: unit -> Async<IActionResult>) =
         let computation =
             async {
                 try
@@ -34,9 +53,18 @@ type HttpRequestHandler
                     
                     telemetryClient.Context.User.AuthenticatedUserId <- userName
                     
-                    let! actionResult = computation ()
+                    if httpRequest |> this.IsAuthorized roles then
+                        
+                        let! actionResult = computation ()
 
-                    return actionResult
+                        return actionResult
+                    else
+                        logger.LogDebug(
+                            LogEvent.AuthorizationError,
+                            "The user is not authorized to access the requested resource"
+                        )
+
+                        return StatusCodeResult(int HttpStatusCode.Forbidden) :> IActionResult
                 with
                 | :? AuthenticationException as ex ->
                     logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
