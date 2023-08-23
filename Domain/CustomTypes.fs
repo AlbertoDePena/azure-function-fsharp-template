@@ -1,25 +1,29 @@
 namespace azure_function_fsharp.Domain.CustomTypes
 
 open System
-
-type EmailAddress = private EmailAddress of string
+open System.Text.RegularExpressions
 
 [<RequireQualifiedAccess>]
-module EmailAddress =
-    open System.Text.RegularExpressions
+module private Singleton =
 
-    let private emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")
+    let private emailRegex = lazy(new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
 
-    let isValid (x: string) = emailRegex.Match(x).Success
+    let EmailRegex = emailRegex.Force()
 
-    let value (EmailAddress x) = x
+type EmailAddress = 
+    private 
+    | EmailAddress of string
 
-    let tryCreate (x: string) =
-        if isValid x then
-            x.ToLower() |> EmailAddress |> Some
+    member this.Value =
+        match this with
+        | EmailAddress value -> value
+
+    static member TryCreate (value: string) =
+        if Singleton.EmailRegex.Match(value).Success then
+            value.ToLower() |> EmailAddress |> Ok
         else
-            None
-
+            Error (sprintf "%s is not a valid email address" value)
+    
 /// Positive whole number including zero
 type NaturalNumber = private NaturalNumber of int
 
