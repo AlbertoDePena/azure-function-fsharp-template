@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.Authentication
+namespace MyFunctionApp.Infrastructure.Authentication
 
 open System.IdentityModel.Tokens.Jwt
 open System.Threading
@@ -12,8 +12,8 @@ open Microsoft.Extensions.Configuration
 
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.Infrastructure.Extensions
-open azure_function_fsharp.Infrastructure.Constants
+open MyFunctionApp.Infrastructure.Extensions
+open MyFunctionApp.Infrastructure.Constants
 
 [<RequireQualifiedAccess>]
 module Authentication =

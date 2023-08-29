@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.Constants
+namespace MyFunctionApp.Infrastructure.Constants
 
 [<RequireQualifiedAccess>]
 module ClaimType =

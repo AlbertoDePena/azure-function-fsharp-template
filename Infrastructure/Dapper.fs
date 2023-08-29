@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.Dapper
+namespace MyFunctionApp.Infrastructure.Dapper
 
 [<RequireQualifiedAccess>]
 module Dapper =

@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.ObjectResults
+namespace MyFunctionApp.Infrastructure.ObjectResults
 
 open System
 open Microsoft.AspNetCore.Mvc

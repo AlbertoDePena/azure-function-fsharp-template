@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.DbConnection
+namespace MyFunctionApp.Infrastructure.DbConnection
 
 [<RequireQualifiedAccess>]
 module DbConnection =

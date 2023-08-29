@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.HttpRequestHandler
+namespace MyFunctionApp.Infrastructure.HttpRequestHandler
 
 open System.Net
 open System.Web.Http
@@ -13,10 +13,10 @@ open Microsoft.Extensions.Configuration
 
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.Infrastructure.Exceptions
-open azure_function_fsharp.Infrastructure.Authentication
-open azure_function_fsharp.Infrastructure.Constants
-open azure_function_fsharp.Domain.CustomTypes
+open MyFunctionApp.Infrastructure.Exceptions
+open MyFunctionApp.Infrastructure.Authentication
+open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Domain.CustomTypes
 
 type HttpRequestHandler
     (

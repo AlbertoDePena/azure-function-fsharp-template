@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Startup
+namespace MyFunctionApp.Startup
 
 open Microsoft.Azure.Functions.Extensions.DependencyInjection
 open Microsoft.ApplicationInsights.Extensibility
@@ -7,10 +7,10 @@ open Microsoft.Extensions.Configuration
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
-open azure_function_fsharp.Infrastructure.Constants
-open azure_function_fsharp.Infrastructure.Telemetry
-open azure_function_fsharp.Infrastructure.Dapper
-open azure_function_fsharp.Infrastructure.HttpRequestHandler
+open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Infrastructure.Telemetry
+open MyFunctionApp.Infrastructure.Dapper
+open MyFunctionApp.Infrastructure.HttpRequestHandler
 
 type Startup() =
     inherit FunctionsStartup()

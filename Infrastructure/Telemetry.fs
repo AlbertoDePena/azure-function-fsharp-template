@@ -1,4 +1,4 @@
-namespace azure_function_fsharp.Infrastructure.Telemetry
+namespace MyFunctionApp.Infrastructure.Telemetry
 
 open System.Reflection
 
@@ -12,9 +12,7 @@ type ComponentVersionInitializer() =
         member this.Initialize(telemetry: ITelemetry) =
             telemetry.Context.Component.Version <-
                 Assembly
-                    .GetAssembly(
-                        typeof<ComponentVersionInitializer>
-                    )
+                    .GetAssembly(typeof<ComponentVersionInitializer>)
                     .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                     .InformationalVersion
 
@@ -22,5 +20,5 @@ type CloudRoleNameInitializer() =
 
     interface ITelemetryInitializer with
 
-        member this.Initialize(telemetry: ITelemetry) = 
+        member this.Initialize(telemetry: ITelemetry) =
             telemetry.Context.Cloud.RoleName <- "azure-function-template"

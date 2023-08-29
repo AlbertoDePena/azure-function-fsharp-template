@@ -1,4 +1,4 @@
-﻿namespace azure_function_fsharp.HttpTriggers.SayHello
+﻿namespace MyFunctionApp.HttpTriggers.SayHello
 
 open System
 open System.Data
@@ -14,10 +14,10 @@ open Microsoft.ApplicationInsights
 open Dapper
 open FsToolkit.ErrorHandling
 
-open azure_function_fsharp.Infrastructure.DbConnection
-open azure_function_fsharp.Infrastructure.Constants
-open azure_function_fsharp.Domain.CustomTypes
-open azure_function_fsharp.Infrastructure.HttpRequestHandler
+open MyFunctionApp.Infrastructure.DbConnection
+open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Domain.CustomTypes
+open MyFunctionApp.Infrastructure.HttpRequestHandler
 
 type SayHello
     (
