@@ -23,17 +23,23 @@ module ClaimValue =
     let Editor = "MyApp_Editor"
 
     [<Literal>]
-    let Viewer = "MyApp_Viewer"    
+    let Viewer = "MyApp_Viewer"
 
 [<RequireQualifiedAccess>]
 module ConfigurationKey =
 
     [<Literal>]
-    let APPLICATION_MESSAGE = "MY_APP_APPLICATION_MESSAGE"
+    let MyApplication_Message = "MyApplication--Message"
 
     [<Literal>]
-    let DB_CONNECTION_STRING = "MY_APP_DB_CONNECTION_STRING"
-    
+    let DbConnectionString_Main = "DbConnectionString--Main"
+
+    [<Literal>]
+    let AzureAd_ClientId = "AzureAd--ClientId"
+
+    [<Literal>]
+    let AzureAd_TenantId = "AzureAd--TenantId"
+
 [<RequireQualifiedAccess>]
 module DimensionName =
 
@@ -72,5 +78,3 @@ module MetricName =
 
     [<Literal>]
     let SayHello = "MyApp.SayHello"
-
-    

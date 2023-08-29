@@ -1,52 +1,53 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
-		<_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>		
-    <WarnOn>3390;$(WarnOn)</WarnOn>
+		<_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+		<WarnOn>3390;$(WarnOn)</WarnOn>
 		<WarningLevel>5</WarningLevel>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <ItemGroup>    
-    <Compile Include="Domain/CustomTypes.fs" />    
-    <Compile Include="Infrastructure/Constants.fs" />  
-    <Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs"/>
-    <Compile Include="Infrastructure/HttpRequestExtensions.fs"/>
-    <Compile Include="Infrastructure/DbConnection.fs" />
-    <Compile Include="Infrastructure/Dapper.fs" />
-    <Compile Include="Infrastructure/Exceptions.fs" />
-    <Compile Include="Infrastructure/ObjectResults.fs" />	
-    <Compile Include="Infrastructure/HttpRequestHandler.fs" />  
-    <Compile Include="Infrastructure/Telemetry.fs" />    
-    <Compile Include="HttpTriggers/SayHello.fs" />
-    <Compile Include="Startup.fs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="Domain/CustomTypes.fs" />
+		<Compile Include="Infrastructure/Constants.fs" />
+		<Compile Include="Infrastructure/DbConnection.fs" />
+		<Compile Include="Infrastructure/Dapper.fs" />
+		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs"/>
+		<Compile Include="Infrastructure/HttpRequestExtensions.fs"/>		
+		<Compile Include="Infrastructure/Exceptions.fs" />
+		<Compile Include="Infrastructure/Authentication.fs" />
+		<Compile Include="Infrastructure/ObjectResults.fs" />
+		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
+		<Compile Include="Infrastructure/Telemetry.fs" />
+		<Compile Include="HttpTriggers/SayHello.fs" />
+		<Compile Include="Startup.fs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="host.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>		
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <None Include="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<None Include="local.settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="FsToolkit.ErrorHandling" Version="2.13.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
-    <PackageReference Include="RT.Comb" Version="4.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="FsToolkit.ErrorHandling" Version="2.13.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
+		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
+		<PackageReference Include="RT.Comb" Version="4.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 		<PackageReference Update="FSharp.Core" Version="6.0.1" />
 	</ItemGroup>
 

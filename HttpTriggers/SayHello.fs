@@ -1,6 +1,7 @@
 ﻿namespace azure_function_fsharp.HttpTriggers.SayHello
 
 open System
+open System.Data
 
 open Microsoft.Azure.WebJobs
 open Microsoft.Azure.WebJobs.Extensions.Http
@@ -10,8 +11,6 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Configuration
 open Microsoft.ApplicationInsights
 
-open System.Data
-open azure_function_fsharp.Infrastructure.Exceptions
 open Dapper
 open FsToolkit.ErrorHandling
 
@@ -20,23 +19,28 @@ open azure_function_fsharp.Infrastructure.Constants
 open azure_function_fsharp.Domain.CustomTypes
 open azure_function_fsharp.Infrastructure.HttpRequestHandler
 
-type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, httpRequestHandler: HttpRequestHandler, telemetryClient: TelemetryClient) =
+type SayHello
+    (
+        configuration: IConfiguration,
+        logger: ILogger<SayHello>,
+        httpRequestHandler: HttpRequestHandler,
+        telemetryClient: TelemetryClient
+    ) =
 
     let createDbConnection =
-        (fun () -> configuration.GetValue<string> ConfigurationKey.DB_CONNECTION_STRING |> DbConnection.create)
+        (fun () ->
+            configuration.GetValue<string> ConfigurationKey.DbConnectionString_Main
+            |> DbConnection.create)
 
     [<FunctionName(nameof SayHello)>]
-    member this.Run
-        (
-            [<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest            
-        ) =
+    member this.Run([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest) =
 
         httpRequestHandler.Handle httpRequest [ Role.Viewer ] (fun () ->
             async {
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 
-                let message = configuration.GetValue<string>(ConfigurationKey.APPLICATION_MESSAGE)
+                let message = configuration.GetValue<string>(ConfigurationKey.MyApplication_Message)
 
                 telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
 
@@ -44,5 +48,3 @@ type SayHello(configuration: IConfiguration, logger: ILogger<SayHello>, httpRequ
 
                 return OkObjectResult(message) :> IActionResult
             })
-
-        
