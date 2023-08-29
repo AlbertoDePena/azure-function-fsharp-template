@@ -13,6 +13,7 @@ open Microsoft.Extensions.Configuration
 
 open FsToolkit.ErrorHandling
 
+open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
@@ -27,19 +28,18 @@ type HttpRequestHandler
     ) =
 
     member this.IsAuthorized (roles: Role list) (httpRequest: HttpRequest) =
-        if httpRequest.HttpContext.User.Identity.IsAuthenticated then
-            let roleClaims =
-                roles
-                |> List.map (fun role ->
-                    match role with
-                    | Role.Administrator -> ClaimValue.Administrator
-                    | Role.Editor -> ClaimValue.Editor
-                    | Role.Viewer -> ClaimValue.Viewer)
+        let claimValues =
+            roles
+            |> List.map (fun role ->
+                match role with
+                | Role.Administrator -> ClaimValue.Administrator
+                | Role.Editor -> ClaimValue.Editor
+                | Role.Viewer -> ClaimValue.Viewer)
 
-            httpRequest.HttpContext.User.FindAll(fun claim -> claim.Type = ClaimType.Role)
-            |> Seq.exists (fun claim -> roleClaims |> List.contains claim.Value)
-        else
-            false
+        httpRequest.HttpContext.User.Identity.IsAuthenticated
+        && httpRequest.HttpContext.User.FindAll(fun claim -> claim.Type = ClaimType.Role)
+           |> Seq.ofNull
+           |> Seq.exists (fun claim -> claimValues |> List.contains claim.Value)
 
     /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =

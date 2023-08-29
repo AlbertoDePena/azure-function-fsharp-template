@@ -11,6 +11,7 @@
 	<ItemGroup>
 		<Compile Include="Domain/CustomTypes.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
+		<Compile Include="Infrastructure/Extensions.fs" />
 		<Compile Include="Infrastructure/DbConnection.fs" />
 		<Compile Include="Infrastructure/Dapper.fs" />
 		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs"/>
