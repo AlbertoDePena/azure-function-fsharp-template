@@ -27,10 +27,10 @@ type SayHello
         telemetryClient: TelemetryClient
     ) =
 
-    let createDbConnection =
-        (fun () ->
-            configuration.GetValue<string> ConfigurationKey.DbConnectionString_Main
-            |> DbConnection.create)
+    let createDbConnection () =
+        ConfigurationKey.DbConnectionString_Main
+        |> configuration.GetValue<string> 
+        |> DbConnection.create
 
     [<FunctionName(nameof SayHello)>]
     member this.Run([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest) =
@@ -40,7 +40,9 @@ type SayHello
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 
-                let message = configuration.GetValue<string>(ConfigurationKey.MyApplication_Message)
+                let message = 
+                    ConfigurationKey.MyApplication_Message
+                    |> configuration.GetValue<string>
 
                 telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
 
