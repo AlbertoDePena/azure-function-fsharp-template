@@ -11,12 +11,12 @@
 	<ItemGroup>
 		<Compile Include="Domain/CustomTypes.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
+		<Compile Include="Infrastructure/Exceptions.fs" />
 		<Compile Include="Infrastructure/Extensions.fs" />
 		<Compile Include="Infrastructure/DbConnection.fs" />
 		<Compile Include="Infrastructure/Dapper.fs" />
-		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs"/>
-		<Compile Include="Infrastructure/HttpRequestExtensions.fs"/>		
-		<Compile Include="Infrastructure/Exceptions.fs" />
+		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
+		<Compile Include="Infrastructure/HttpRequestExtensions.fs" />
 		<Compile Include="Infrastructure/Authentication.fs" />
 		<Compile Include="Infrastructure/ObjectResults.fs" />
 		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
