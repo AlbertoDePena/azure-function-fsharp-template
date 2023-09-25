@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="Domain/CustomTypes.fs" />
+		<Compile Include="Domain\ConstraintTypes.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
 		<Compile Include="Infrastructure/Exceptions.fs" />
 		<Compile Include="Infrastructure/Extensions.fs" />

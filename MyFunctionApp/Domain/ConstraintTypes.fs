@@ -1,4 +1,4 @@
-namespace MyFunctionApp.Domain.CustomTypes
+namespace MyFunctionApp.Domain.ConstraintTypes
 
 open System
 
@@ -97,7 +97,21 @@ type NonEmptyText =
         if String.IsNullOrWhiteSpace value then
             Error "The text is required and cannot be empty"
         else
-            value.Trim() |> NonEmptyText |> Ok
+            value |> NonEmptyText |> Ok
+
+type Text =
+    private
+    | Text of string
+
+    member this.Value =
+        match this with
+        | Text value -> value
+
+    static member TryCreate(value: string) =
+        if isNull value then
+            Error "The text is required"
+        else
+            value |> Text |> Ok
 
 type UniqueId =
     private

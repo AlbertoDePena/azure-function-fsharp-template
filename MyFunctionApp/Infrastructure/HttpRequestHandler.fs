@@ -17,7 +17,7 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.CustomTypes
+open MyFunctionApp.Domain.ConstraintTypes
 
 type HttpRequestHandler
     (

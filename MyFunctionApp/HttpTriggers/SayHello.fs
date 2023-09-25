@@ -16,7 +16,7 @@ open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.DbConnection
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.CustomTypes
+open MyFunctionApp.Domain.ConstraintTypes
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 
 type SayHello
