@@ -4,11 +4,11 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "7d945855-da70-41fe-a6b2-53bc73642252",
-    
+
     "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-    "MyApplication--Message": "Hello World!",
-    "DbConnectionString--Main": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyAppDatabase;Trusted_Connection=True;",
+    "Application--Message": "Hello World!",
+    "Database--ConnectionString": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyAppDatabase;Trusted_Connection=True;",
 
     "AzureAd--ClientId": "",
     "AzureAd--TenantId": ""

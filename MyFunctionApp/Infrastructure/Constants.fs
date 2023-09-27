@@ -26,21 +26,6 @@ module ClaimValue =
     let Viewer = "MyApp_Viewer"
 
 [<RequireQualifiedAccess>]
-module ConfigurationKey =
-
-    [<Literal>]
-    let MyApplication_Message = "MyApplication--Message"
-
-    [<Literal>]
-    let DbConnectionString_Main = "DbConnectionString--Main"
-
-    [<Literal>]
-    let AzureAd_ClientId = "AzureAd--ClientId"
-
-    [<Literal>]
-    let AzureAd_TenantId = "AzureAd--TenantId"
-
-[<RequireQualifiedAccess>]
 module DimensionName =
 
     [<Literal>]

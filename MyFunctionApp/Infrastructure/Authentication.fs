@@ -8,19 +8,20 @@ open Microsoft.Extensions.Logging
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 open Microsoft.IdentityModel.Tokens
-open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Infrastructure.Options
 
 [<RequireQualifiedAccess>]
 module Authentication =
 
     let authenticate
         (logger: ILogger)
-        (configuration: IConfiguration)
+        (azureAdOptions: IOptions<AzureAd>)
         (openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>)
         (httpRequest: HttpRequest)
         =
@@ -39,7 +40,7 @@ module Authentication =
                     let validationParameters =
                         TokenValidationParameters(
                             RequireSignedTokens = true,
-                            ValidAudience = configuration.GetValue<string>(ConfigurationKey.AzureAd_ClientId),
+                            ValidAudience = azureAdOptions.Value.ClientId,
                             ValidateAudience = true,
                             ValidateIssuer = true,
                             ValidateIssuerSigningKey = true,

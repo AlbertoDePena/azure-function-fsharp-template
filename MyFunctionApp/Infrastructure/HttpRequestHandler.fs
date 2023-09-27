@@ -9,7 +9,7 @@ open Microsoft.Extensions.Logging
 open Microsoft.ApplicationInsights
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
-open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
@@ -17,12 +17,13 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Infrastructure.Options
 open MyFunctionApp.Domain.ConstraintTypes
 
 type HttpRequestHandler
     (
         logger: ILogger<HttpRequestHandler>,
-        configuration: IConfiguration,
+        azureAdOptions: IOptions<AzureAd>,
         openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>,
         telemetryClient: TelemetryClient
     ) =
@@ -44,6 +45,7 @@ type HttpRequestHandler
     /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
         try
+            // TODO - get user from claims principal.
             "azure-function-user"
         with ex ->
             AuthenticationException(ex) |> raise
@@ -54,7 +56,7 @@ type HttpRequestHandler
             async {
                 try
                     let! claimsPrincipal =
-                        Authentication.authenticate logger configuration openIdConfigurationManager httpRequest
+                        Authentication.authenticate logger azureAdOptions openIdConfigurationManager httpRequest
 
                     match claimsPrincipal with
                     | None -> return UnauthorizedResult() :> IActionResult

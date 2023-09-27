@@ -4,6 +4,7 @@ open Microsoft.Azure.Functions.Extensions.DependencyInjection
 open Microsoft.ApplicationInsights.Extensibility
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Configuration
+open Microsoft.Extensions.Options
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
@@ -11,6 +12,7 @@ open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Infrastructure.Telemetry
 open MyFunctionApp.Infrastructure.Dapper
 open MyFunctionApp.Infrastructure.HttpRequestHandler
+open MyFunctionApp.Infrastructure.Options
 
 type Startup() =
     inherit FunctionsStartup()
@@ -19,22 +21,41 @@ type Startup() =
 
         Dapper.registerOptionType ()
 
-        let configuration = builder.GetContext().Configuration
+        builder.Services
+            .AddOptions<Application>()
+            .Configure<IConfiguration>(fun settings configuration ->
+                configuration.GetSection(nameof Application).Bind(settings))
+        |> ignore
+
+        builder.Services
+            .AddOptions<Database>()
+            .Configure<IConfiguration>(fun settings configuration ->
+                configuration.GetSection(nameof Database).Bind(settings))
+        |> ignore
+
+        builder.Services
+            .AddOptions<AzureAd>()
+            .Configure<IConfiguration>(fun settings configuration ->
+                configuration.GetSection(nameof AzureAd).Bind(settings))
+        |> ignore
 
         builder.Services
             .AddSingleton<ITelemetryInitializer, CloudRoleNameInitializer>()
             .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()
         |> ignore
 
-        let tenantId = configuration.GetValue<string>(ConfigurationKey.AzureAd_TenantId)
-
-        let clientId = configuration.GetValue<string>(ConfigurationKey.AzureAd_ClientId)
-
-        let metadataAddress =
-            $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration?appid={clientId}"
-
         builder.Services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(
-            ConfigurationManager<OpenIdConnectConfiguration>(metadataAddress, OpenIdConnectConfigurationRetriever())
+            (fun serviceProvider ->
+                let azureAdOptions = serviceProvider.GetRequiredService<IOptions<AzureAd>>()
+
+                let metadataAddress =
+                    $"https://login.microsoftonline.com/{azureAdOptions.Value.TenantId}/v2.0/.well-known/openid-configuration?appid={azureAdOptions.Value.ClientId}"
+
+                ConfigurationManager<OpenIdConnectConfiguration>(
+                    metadataAddress,
+                    OpenIdConnectConfigurationRetriever()
+                )
+                :> IConfigurationManager<OpenIdConnectConfiguration>)
         )
         |> ignore
 
