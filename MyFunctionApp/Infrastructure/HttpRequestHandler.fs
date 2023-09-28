@@ -10,8 +10,8 @@ open Microsoft.ApplicationInsights
 
 open FsToolkit.ErrorHandling
 
-open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Exceptions
+open MyFunctionApp.Infrastructure.Authorization
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Domain.ConstraintTypes
@@ -20,22 +20,9 @@ type HttpRequestHandler
     (
         logger: ILogger<HttpRequestHandler>,
         telemetryClient: TelemetryClient,
-        authentication: Authentication
+        authentication: Authentication,
+        authorization: Authorization
     ) =
-
-    member this.IsAuthorized (roles: Role list) (httpRequest: HttpRequest) =
-        let claimValues =
-            roles
-            |> List.map (fun role ->
-                match role with
-                | Role.Administrator -> ClaimValue.Administrator
-                | Role.Editor -> ClaimValue.Editor
-                | Role.Viewer -> ClaimValue.Viewer)
-
-        httpRequest.HttpContext.User.Identity.IsAuthenticated
-        && httpRequest.HttpContext.User.FindAll(fun claim -> claim.Type = ClaimType.Role)
-           |> Seq.ofNull
-           |> Seq.exists (fun claim -> claimValues |> List.contains claim.Value)
 
     /// <exception cref="AuthenticationException"></exception>
     member this.GetUserName(httpRequest: HttpRequest) =
@@ -60,7 +47,7 @@ type HttpRequestHandler
 
                         telemetryClient.Context.User.AuthenticatedUserId <- (this.GetUserName httpRequest)
 
-                        if httpRequest |> this.IsAuthorized roles then
+                        if authorization.IsAuthorized (httpRequest, roles) then
 
                             let! actionResult = computation ()
 
@@ -71,7 +58,7 @@ type HttpRequestHandler
                                 "The user is not authorized to access the requested resource"
                             )
 
-                            return StatusCodeResult(int HttpStatusCode.Forbidden) :> IActionResult
+                            return ForbidResult() :> IActionResult
                 with
                 | :? AuthenticationException as ex ->
                     logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
