@@ -7,9 +7,6 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open Microsoft.ApplicationInsights
-open Microsoft.IdentityModel.Protocols
-open Microsoft.IdentityModel.Protocols.OpenIdConnect
-open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
@@ -17,15 +14,13 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Infrastructure.Options
 open MyFunctionApp.Domain.ConstraintTypes
 
 type HttpRequestHandler
     (
         logger: ILogger<HttpRequestHandler>,
-        azureAdOptions: IOptions<AzureAd>,
-        openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>,
-        telemetryClient: TelemetryClient
+        telemetryClient: TelemetryClient,
+        authentication: Authentication
     ) =
 
     member this.IsAuthorized (roles: Role list) (httpRequest: HttpRequest) =
@@ -55,8 +50,7 @@ type HttpRequestHandler
         let computation =
             async {
                 try
-                    let! claimsPrincipal =
-                        Authentication.authenticate logger azureAdOptions openIdConfigurationManager httpRequest
+                    let! claimsPrincipal = authentication.Authenticate httpRequest
 
                     match claimsPrincipal with
                     | None -> return UnauthorizedResult() :> IActionResult

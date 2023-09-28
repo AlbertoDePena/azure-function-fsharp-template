@@ -16,15 +16,14 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Infrastructure.Options
 
-[<RequireQualifiedAccess>]
-module Authentication =
+type Authentication
+    (
+        logger: ILogger<Authentication>,
+        azureAdOptions: IOptions<AzureAd>,
+        openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>
+    ) =
 
-    let authenticate
-        (logger: ILogger)
-        (azureAdOptions: IOptions<AzureAd>)
-        (openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>)
-        (httpRequest: HttpRequest)
-        =
+    member this.Authenticate(httpRequest: HttpRequest) =
         async {
             try
                 match httpRequest.TryGetBearerToken() with
