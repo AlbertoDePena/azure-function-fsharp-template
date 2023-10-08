@@ -17,13 +17,13 @@ module ClaimType =
 module ClaimValue =
 
     [<Literal>]
-    let Administrator = "MyApp_Administrator"
+    let PotentialDelayAdministrator = "Potential-Delay-Administrator"
 
     [<Literal>]
-    let Editor = "MyApp_Editor"
+    let PotentialDelayApprover = "Potential-Delay-Approver"
 
     [<Literal>]
-    let Viewer = "MyApp_Viewer"
+    let Viewer = "Viewer"
 
 [<RequireQualifiedAccess>]
 module DimensionName =

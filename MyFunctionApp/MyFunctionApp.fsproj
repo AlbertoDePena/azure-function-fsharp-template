@@ -9,18 +9,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="Domain\ConstraintTypes.fs" />
+		<Compile Include="Domain\Invariants.fs" />
+		<Compile Include="Domain\User.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
 		<Compile Include="Infrastructure/Exceptions.fs" />
 		<Compile Include="Infrastructure/Extensions.fs" />
+		<Compile Include="Infrastructure\Dapper.fs" />
 		<Compile Include="Infrastructure\Options.fs" />
-		<Compile Include="Infrastructure/DbConnection.fs" />
-		<Compile Include="Infrastructure/Dapper.fs" />
+		<Compile Include="Infrastructure\UserRepository.fs" />
+		<Compile Include="Infrastructure/ObjectResults.fs" />
 		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
 		<Compile Include="Infrastructure/HttpRequestExtensions.fs" />
 		<Compile Include="Infrastructure/Authentication.fs" />
-		<Compile Include="Infrastructure\Authorization.fs" />
-		<Compile Include="Infrastructure/ObjectResults.fs" />
 		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
 		<Compile Include="Infrastructure/Telemetry.fs" />
 		<Compile Include="HttpTriggers/SayHello.fs" />

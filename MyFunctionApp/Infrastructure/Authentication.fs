@@ -4,7 +4,6 @@ open System.IdentityModel.Tokens.Jwt
 open System.Threading
 
 open Microsoft.AspNetCore.Http
-open Microsoft.Extensions.Logging
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 open Microsoft.IdentityModel.Tokens
@@ -12,22 +11,19 @@ open Microsoft.Extensions.Options
 
 open FsToolkit.ErrorHandling
 
+open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
-open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Infrastructure.Options
 
 type Authentication
-    (
-        logger: ILogger<Authentication>,
-        azureAdOptions: IOptions<AzureAd>,
-        openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>
-    ) =
+    (azureAdOptions: IOptions<AzureAd>, openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>) =
 
+    /// <exception cref="AuthenticationException"></exception>
     member this.Authenticate(httpRequest: HttpRequest) =
         async {
             try
                 match httpRequest.TryGetBearerToken() with
-                | None -> return None
+                | None -> return failwith "The HTTP request does not have a bearer token"
                 | Some idToken ->
 
                     let tokenValidator = JwtSecurityTokenHandler()
@@ -49,9 +45,13 @@ type Authentication
 
                     let mutable securityToken = Unchecked.defaultof<SecurityToken>
 
-                    return Some(tokenValidator.ValidateToken(idToken, validationParameters, ref securityToken))
-            with ex ->
-                logger.LogError(LogEvent.AuthenticationError, ex, ex.Message)
+                    let claimsPrincipal =
+                        tokenValidator.ValidateToken(idToken, validationParameters, ref securityToken)
 
-                return None
+                    if not claimsPrincipal.Identity.IsAuthenticated then
+                        failwith "The user is not authenticated"
+
+                    return claimsPrincipal
+            with ex ->
+                return (AuthenticationException ex |> raise)
         }

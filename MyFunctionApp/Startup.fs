@@ -8,9 +8,8 @@ open Microsoft.Extensions.Options
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
-open MyFunctionApp.Infrastructure.Telemetry
 open MyFunctionApp.Infrastructure.Dapper
-open MyFunctionApp.Infrastructure.Authorization
+open MyFunctionApp.Infrastructure.Telemetry
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
@@ -19,7 +18,7 @@ type Startup() =
     inherit FunctionsStartup()
 
     override this.Configure(builder: IFunctionsHostBuilder) =
-
+        
         Dapper.registerOptionType ()
 
         builder.Services
@@ -62,8 +61,7 @@ type Startup() =
 
         //builder.Services.AddHttpClient() |> ignore
 
-        builder.Services.AddSingleton<Authentication>() |> ignore
-        builder.Services.AddSingleton<Authorization>() |> ignore
+        builder.Services.AddSingleton<Authentication>() |> ignore        
         builder.Services.AddTransient<HttpRequestHandler>() |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]

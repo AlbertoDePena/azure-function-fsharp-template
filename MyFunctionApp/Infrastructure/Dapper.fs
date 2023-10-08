@@ -1,10 +1,11 @@
 namespace MyFunctionApp.Infrastructure.Dapper
 
+open System
+open Dapper
+
 [<RequireQualifiedAccess>]
 module Dapper =
-    open System
-    open Dapper
-
+    
     type private OptionHandler<'T>() =
         inherit SqlMapper.TypeHandler<option<'T>>()
 

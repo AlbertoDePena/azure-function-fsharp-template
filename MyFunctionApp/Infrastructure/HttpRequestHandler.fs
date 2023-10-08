@@ -1,6 +1,6 @@
 namespace MyFunctionApp.Infrastructure.HttpRequestHandler
 
-open System.Net
+open System.Security.Claims
 open System.Web.Http
 
 open Microsoft.AspNetCore.Http
@@ -11,54 +11,63 @@ open Microsoft.ApplicationInsights
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Exceptions
-open MyFunctionApp.Infrastructure.Authorization
+open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.ConstraintTypes
+open MyFunctionApp.Domain.Invariants
+open MyFunctionApp.Domain.User
 
 type HttpRequestHandler
-    (
-        logger: ILogger<HttpRequestHandler>,
-        telemetryClient: TelemetryClient,
-        authentication: Authentication,
-        authorization: Authorization
-    ) =
+    (logger: ILogger<HttpRequestHandler>, telemetryClient: TelemetryClient, authentication: Authentication) =
 
-    /// <exception cref="AuthenticationException"></exception>
-    member this.GetUserName(httpRequest: HttpRequest) =
-        try
-            // TODO - get user from claims principal.
-            "azure-function-user"
-        with ex ->
-            AuthenticationException(ex) |> raise
+    member this.Handle
+        (httpRequest: HttpRequest)
+        (userGroups: UserGroup list)
+        (computation: UserName -> Async<IActionResult>)
+        =
 
-    /// <summary>Executes the computation and functions as a top level error handler</summary>
-    member this.Handle (httpRequest: HttpRequest) (roles: Role list) (computation: unit -> Async<IActionResult>) =
+        /// <exception cref="AuthenticationException"></exception>
+        let getUserName (claimsPrincipal: ClaimsPrincipal) =
+            claimsPrincipal.TryGetClaimValue ClaimType.EmailAddress
+            |> Option.defaultValue String.defaultValue
+            |> UserName.TryCreate
+            |> Result.valueOr (AuthenticationException >> raise)
+
+        /// <exception cref="AuthorizationException"></exception>
+        let checkAuthorization (claimsPrincipal: ClaimsPrincipal) (userGroups: UserGroup list) =
+            let claimValues =
+                userGroups
+                |> List.map (fun userGroup ->
+                    match userGroup with
+                    | UserGroup.Viewer -> ClaimValue.Viewer
+                    | UserGroup.PotentialDelayAdministrator -> ClaimValue.PotentialDelayAdministrator
+                    | UserGroup.PotentialDelayApprover -> ClaimValue.PotentialDelayApprover)
+
+            claimsPrincipal.FindAll(fun claim -> claim.Type = ClaimType.Role)
+            |> Seq.ofNull
+            |> Seq.exists (fun claim -> claimValues |> List.contains claim.Value)
+            |> fun isAuthorized ->
+                if not isAuthorized then
+                    "The user is not authorized to access the requested resource"
+                    |> AuthorizationException
+                    |> raise
+
         let computation =
             async {
                 try
                     let! claimsPrincipal = authentication.Authenticate httpRequest
 
-                    match claimsPrincipal with
-                    | None -> return UnauthorizedResult() :> IActionResult
-                    | Some claimsPrincipal ->
+                    let userName = getUserName claimsPrincipal
 
-                        httpRequest.HttpContext.User <- claimsPrincipal
+                    httpRequest.HttpContext.User <- claimsPrincipal
 
-                        telemetryClient.Context.User.AuthenticatedUserId <- (this.GetUserName httpRequest)
+                    telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
 
-                        if authorization.IsAuthorized (httpRequest, roles) then
+                    checkAuthorization claimsPrincipal userGroups
 
-                            let! actionResult = computation ()
+                    let! actionResult = computation userName
 
-                            return actionResult
-                        else
-                            logger.LogDebug(
-                                LogEvent.AuthorizationError,
-                                "The user is not authorized to access the requested resource"
-                            )
-
-                            return ForbidResult() :> IActionResult
+                    return actionResult
                 with
                 | :? AuthenticationException as ex ->
                     logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)

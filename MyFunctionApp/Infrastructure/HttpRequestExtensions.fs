@@ -1,13 +1,14 @@
 namespace MyFunctionApp.Infrastructure.Extensions
 
+open System
+open System.IO
+open Microsoft.AspNetCore.Http
+open Newtonsoft.Json
+open FsToolkit.ErrorHandling
+
 [<AutoOpen>]
 module HttpRequestExtensions =
-    open System
-    open System.IO
-    open Microsoft.AspNetCore.Http
-    open Newtonsoft.Json
-    open FsToolkit.ErrorHandling
-
+    
     type HttpRequest with
 
         member this.TryGetBearerToken() =

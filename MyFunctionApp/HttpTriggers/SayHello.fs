@@ -11,14 +11,15 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.ApplicationInsights
 open Microsoft.Extensions.Options
 
-open Dapper
 open FsToolkit.ErrorHandling
 
-open MyFunctionApp.Infrastructure.DbConnection
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.ConstraintTypes
+open MyFunctionApp.Domain.Invariants
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
+open MyFunctionApp.Domain.User
+
+open MyFunctionApp.Infrastructure.UserRepository
 
 type SayHello
     (
@@ -29,14 +30,23 @@ type SayHello
         telemetryClient: TelemetryClient
     ) =
 
-    let createDbConnection () =
-        DbConnection.create databaseOptions.Value.ConnectionString
-
     [<FunctionName(nameof SayHello)>]
-    member this.Run([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get)>] httpRequest: HttpRequest) =
+    member this.Run([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/SayHello")>] httpRequest: HttpRequest) =
 
-        httpRequestHandler.Handle httpRequest [ Role.Viewer ] (fun () ->
+        httpRequestHandler.Handle httpRequest [ UserGroup.Viewer ] (fun userName ->
             async {
+                let dbConnectionString =
+                    databaseOptions.Value.ConnectionString
+                    |> DbConnectionString.TryCreate
+                    |> Result.valueOr failwith
+
+                let emailAddress =
+                    userName.Value
+                    |> EmailAddress.TryCreate
+                    |> Result.valueOr failwith
+
+                let! userOption = UserRepository.tryFindByEmailAddress dbConnectionString emailAddress
+
                 let guid = Guid.NewGuid()
                 let correlationId = guid.ToString()
 

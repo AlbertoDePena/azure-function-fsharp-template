@@ -1,10 +1,11 @@
 namespace MyFunctionApp.Infrastructure.Extensions
 
+open System
+open System.Security.Claims
+
 [<AutoOpen>]
 module ClaimsPrincipalExtensions =
-    open System
-    open System.Security.Claims
-
+    
     type ClaimsPrincipal with
 
         member this.TryGetClaimValue(name: string) =
