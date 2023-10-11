@@ -41,7 +41,7 @@ module QueryRequest =
             let! searchCriteria = query.SearchCriteria |> Text256.TryCreateOption
             and! page = query.Page |> PositiveNumber.TryCreate
             and! pageSize = query.PageSize |> PositiveNumber.TryCreate
-            and! sortBy = query.SortBy |> PropertyName.TryCreateOption
+            and! sortBy = query.SortBy |> Text256.TryCreateOption
 
             let sortDirection = query.SortDirection |> SortDirection.FromString
 

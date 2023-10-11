@@ -66,7 +66,7 @@ type DbConnectionString =
         | DbConnectionString value -> value
 
     static member TryCreate(value: string) =
-        ConstraintTypes.createString "Database connection string" DbConnectionString Int32.MaxValue value
+        ConstraintTypes.createString "Database Connection String" DbConnectionString Int32.MaxValue value
 
 type EmailAddress =
     private
@@ -89,20 +89,6 @@ type PositiveNumber =
 
     static member TryCreate(value: int) =
         ConstraintTypes.createInteger "Positive Number" PositiveNumber 1 Int32.MaxValue value
-
-type PropertyName =
-    private
-    | PropertyName of string
-
-    member this.Value =
-        match this with
-        | PropertyName value -> value
-
-    static member TryCreate(value: string) =
-        ConstraintTypes.createString "Property Name" PropertyName 256 value
-
-    static member TryCreateOption(value: string) =
-        ConstraintTypes.createStringOption "Property Name" PropertyName 256 value
 
 type UniqueId =
     private

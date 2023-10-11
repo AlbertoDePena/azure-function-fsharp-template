@@ -24,13 +24,13 @@ type Query =
       ActiveOnly: bool
       Page: PositiveNumber
       PageSize: PositiveNumber
-      SortBy: PropertyName option
+      SortBy: Text256 option
       SortDirection: SortDirection option }
 
 type PagedData<'a> =
     { Page: PositiveNumber
       PageSize: PositiveNumber
       TotalCount: PositiveNumber
-      SortBy: PropertyName option
+      SortBy: Text256 option
       SortDirection: SortDirection option
       Data: 'a list }
