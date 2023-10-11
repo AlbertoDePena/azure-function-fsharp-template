@@ -1,4 +1,4 @@
-namespace MyFunctionApp.Domain.Invariants
+namespace MyFunctionApp.Invariants
 
 open System
 
@@ -66,18 +66,7 @@ type DbConnectionString =
         | DbConnectionString value -> value
 
     static member TryCreate(value: string) =
-        ConstraintTypes.createString "Database connection string" DbConnectionString 256 value
-
-type DisplayName =
-    private
-    | DisplayName of string
-
-    member this.Value =
-        match this with
-        | DisplayName value -> value
-
-    static member TryCreate(value: string) =
-        ConstraintTypes.createString "Display Name" DisplayName 256 value
+        ConstraintTypes.createString "Database connection string" DbConnectionString Int32.MaxValue value
 
 type EmailAddress =
     private
@@ -89,6 +78,31 @@ type EmailAddress =
 
     static member TryCreate(value: string) =
         ConstraintTypes.createStringLike "Email Address" EmailAddress @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" value
+
+type PositiveNumber =
+    private
+    | PositiveNumber of int
+
+    member this.Value =
+        match this with
+        | PositiveNumber value -> value
+
+    static member TryCreate(value: int) =
+        ConstraintTypes.createInteger "Positive Number" PositiveNumber 1 Int32.MaxValue value
+
+type PropertyName =
+    private
+    | PropertyName of string
+
+    member this.Value =
+        match this with
+        | PropertyName value -> value
+
+    static member TryCreate(value: string) =
+        ConstraintTypes.createString "Property Name" PropertyName 256 value
+
+    static member TryCreateOption(value: string) =
+        ConstraintTypes.createStringOption "Property Name" PropertyName 256 value
 
 type UniqueId =
     private
@@ -102,7 +116,7 @@ type UniqueId =
         if value <> Guid.Empty then
             value |> UniqueId |> Ok
         else
-            Error(sprintf "%O is not a valid unique identifier" value)
+            Error "The unique identifier cannot be empty"
 
     static member Create() =
         RT.Comb.Provider.Sql.Create() |> UniqueId
@@ -118,3 +132,16 @@ type UserName =
     static member TryCreate(value: string) =
         ConstraintTypes.createString "User Name" UserName 256 value
 
+type Text256 =
+    private
+    | Text256 of string
+
+    member this.Value =
+        match this with
+        | Text256 value -> value
+
+    static member TryCreate(value: string) =
+        ConstraintTypes.createString "Text" Text256 256 value
+
+    static member TryCreateOption(value: string) =
+        ConstraintTypes.createStringOption "Text" Text256 256 value

@@ -14,8 +14,8 @@ open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.Invariants
-open MyFunctionApp.Domain.User
+open MyFunctionApp.Invariants
+open MyFunctionApp.User.Domain
 
 type HttpRequestHandler
     (logger: ILogger<HttpRequestHandler>, telemetryClient: TelemetryClient, authentication: Authentication) =
@@ -40,6 +40,7 @@ type HttpRequestHandler
                 |> List.map (fun userGroup ->
                     match userGroup with
                     | UserGroup.Viewer -> ClaimValue.Viewer
+                    | UserGroup.Editor -> ClaimValue.Editor
                     | UserGroup.PotentialDelayAdministrator -> ClaimValue.PotentialDelayAdministrator
                     | UserGroup.PotentialDelayApprover -> ClaimValue.PotentialDelayApprover)
 

@@ -9,8 +9,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="Domain\Invariants.fs" />
-		<Compile Include="Domain\User.fs" />
+		<Compile Include="Invariants.fs" />
+		<Compile Include="Domain.fs" />
+		<Compile Include="UserDomain.fs" />
+		<Compile Include="SharedDTOs.fs" />
+		<Compile Include="UserDTOs.fs" />
+		<Compile Include="UserWorkflows.fs" />
+		<Compile Include="UserStorage.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
 		<Compile Include="Infrastructure/Exceptions.fs" />
 		<Compile Include="Infrastructure/Extensions.fs" />
@@ -42,7 +47,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.123" />
-		<PackageReference Include="FsToolkit.ErrorHandling" Version="2.13.0" />
+		<PackageReference Include="FsToolkit.ErrorHandling" Version="4.9.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />

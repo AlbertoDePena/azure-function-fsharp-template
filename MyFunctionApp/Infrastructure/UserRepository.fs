@@ -7,18 +7,19 @@ open Microsoft.Data.SqlClient
 open Dapper
 open FsToolkit.ErrorHandling
 
-open MyFunctionApp.Domain.Invariants
-open MyFunctionApp.Domain.User
+open MyFunctionApp.Invariants
+open MyFunctionApp.User.Domain
 open MyFunctionApp.Infrastructure.Exceptions
 
+[<NoComparison>]
 [<CLIMutable>]
 type UserProjection =
     { Id: Guid
       EmailAddress: string
       DisplayName: string
       Type: string
-      Permissions: string list 
-      Groups: string list }
+      Permissions: string seq 
+      Groups: string seq }
 
     static member Sql =
         @"SELECT 

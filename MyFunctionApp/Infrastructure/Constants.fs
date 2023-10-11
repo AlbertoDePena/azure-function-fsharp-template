@@ -25,6 +25,9 @@ module ClaimValue =
     [<Literal>]
     let Viewer = "Viewer"
 
+    [<Literal>]
+    let Editor = "Editor"
+
 [<RequireQualifiedAccess>]
 module DimensionName =
 

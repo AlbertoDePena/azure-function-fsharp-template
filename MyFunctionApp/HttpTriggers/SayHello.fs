@@ -14,10 +14,10 @@ open Microsoft.Extensions.Options
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Domain.Invariants
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
-open MyFunctionApp.Domain.User
+open MyFunctionApp.Invariants
+open MyFunctionApp.User.Domain
 
 open MyFunctionApp.Infrastructure.UserRepository
 
