@@ -40,7 +40,7 @@ module Task =
     open FsToolkit.ErrorHandling
 
     [<RequireQualifiedAccess>]
-    type TaskStatus<'a> =
+    type Status<'a> =
         | Completed of 'a
         | Failed
 
@@ -49,7 +49,7 @@ module Task =
         |> Task.catch
         |> Task.map (fun choice ->
             match choice with
-            | Choice1Of2 x -> TaskStatus.Completed x
+            | Choice1Of2 x -> Status.Completed x
             | Choice2Of2 ex ->
                 handler ex
-                TaskStatus.Failed)
+                Status.Failed)

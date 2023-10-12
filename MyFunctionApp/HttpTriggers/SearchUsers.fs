@@ -86,7 +86,7 @@ type SearchUsers
                         |> Task.handleException (fun ex -> logger.LogError(LogEvent.DataStorageError, ex, ex.Message))
 
                     match pagedDataStatus with
-                    | Task.TaskStatus.Completed pagedData ->
+                    | Task.Status.Completed pagedData ->
                         let guid = Guid.NewGuid()
                         let correlationId = guid.ToString()
 
@@ -99,5 +99,5 @@ type SearchUsers
 
                         return OkObjectResult(pagedDataResponse) :> IActionResult
 
-                    | Task.TaskStatus.Failed -> return InternalServerErrorResult() :> IActionResult
+                    | Task.Status.Failed -> return InternalServerErrorResult() :> IActionResult
             })
