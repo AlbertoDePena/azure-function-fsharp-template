@@ -7,7 +7,6 @@
 
     "AzureFunctionsJobHost__logging__LogLevel__Default": "Trace",
 
-    "Application--Message": "Hello World!",
     "Database--ConnectionString": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyAppDatabase;Trusted_Connection=True;",
 
     "AzureAd--ClientId": "",

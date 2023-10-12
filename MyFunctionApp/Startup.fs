@@ -21,12 +21,6 @@ type Startup() =
         Dapper.registerOptionType ()
 
         builder.Services
-            .AddOptions<Application>()
-            .Configure<IConfiguration>(fun settings configuration ->
-                configuration.GetSection(nameof Application).Bind(settings))
-        |> ignore
-
-        builder.Services
             .AddOptions<Database>()
             .Configure<IConfiguration>(fun settings configuration ->
                 configuration.GetSection(nameof Database).Bind(settings))

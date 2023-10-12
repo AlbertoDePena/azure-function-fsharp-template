@@ -29,7 +29,6 @@ open MyFunctionApp.User.DTOs
 type SayHello
     (
         logger: ILogger<SayHello>,
-        applicationOptions: IOptions<Application>,
         databaseOptions: IOptions<Database>,
         httpRequestHandler: HttpRequestHandler,
         telemetryClient: TelemetryClient
@@ -88,8 +87,6 @@ type SayHello
 
                         let pagedDataResponse =
                             pagedData |> PagedDataResponse.fromDomain UserResponse.fromDomain
-
-                        let message = applicationOptions.Value.Message
 
                         telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
 

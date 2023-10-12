@@ -49,7 +49,7 @@ type HttpRequestHandler
         =
 
         /// <exception cref="AuthenticationException"></exception>
-        let authenticate () =
+        let getClaimsPrincipal () =
             async {
                 try
                     match httpRequest.TryGetBearerToken() with
@@ -116,7 +116,7 @@ type HttpRequestHandler
         let computation =
             async {
                 try
-                    let! claimsPrincipal = authenticate ()
+                    let! claimsPrincipal = getClaimsPrincipal ()
 
                     let userName = getUserName claimsPrincipal
 
