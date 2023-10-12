@@ -78,9 +78,9 @@ type SayHello
                     return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
                 | Ok query ->
-                    let! pagedDataResult = UserStorage.search dbConnectionString query |> Async.Catch
+                    let! pagedDataChoice = UserStorage.search dbConnectionString query |> Async.Catch
 
-                    match pagedDataResult with
+                    match pagedDataChoice with
                     | Choice1Of2 pagedData ->
                         let guid = Guid.NewGuid()
                         let correlationId = guid.ToString()

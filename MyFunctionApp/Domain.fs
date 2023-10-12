@@ -1,6 +1,7 @@
 ﻿namespace MyFunctionApp.Domain
 
 open System
+open FsToolkit.ErrorHandling
 open MyFunctionApp.Invariants
 
 type StorageException = Exception
@@ -18,7 +19,7 @@ type SortDirection =
     static member FromString(value: string) =
         match value with
         | "Ascending" -> Some Ascending
-        | "Descending" -> Some Descending        
+        | "Descending" -> Some Descending
         | _ -> None
 
 type Query =
@@ -36,3 +37,14 @@ type PagedData<'a> =
       SortBy: Text256 option
       SortDirection: SortDirection option
       Data: 'a list }
+
+    member this.CalculateNumberOfPages() =
+        let pageCount = this.TotalCount.Value / this.PageSize.Value
+
+        let integer =            
+            if (this.TotalCount.Value % this.PageSize.Value) = 0 then
+                pageCount
+            else
+                pageCount + 1
+
+        integer |> WholeNumber.TryCreate |> Result.defaultValue WholeNumber.DefaultValue

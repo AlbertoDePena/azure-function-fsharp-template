@@ -22,8 +22,7 @@ type PagedDataResponse<'a> =
       Data: 'a array }
 
 [<RequireQualifiedAccess>]
-module PagedDataResponse =
-    open System
+module PagedDataResponse =    
     open FsToolkit.ErrorHandling
     open MyFunctionApp.Extensions
     open MyFunctionApp.Domain
@@ -32,14 +31,7 @@ module PagedDataResponse =
         { PageSize = source.PageSize.Value
           Page = source.Page.Value
           TotalCount = source.TotalCount.Value
-          NumberOfPages =
-            try
-                if (source.TotalCount.Value % source.PageSize.Value) = 0 then
-                    Convert.ToInt32((source.TotalCount.Value / source.PageSize.Value))
-                else
-                    Convert.ToInt32((source.TotalCount.Value / source.PageSize.Value)) + 1
-            with _ ->
-                0
+          NumberOfPages = source.CalculateNumberOfPages().Value
           SortBy =
             source.SortBy
             |> Option.map (fun x -> x.Value)
