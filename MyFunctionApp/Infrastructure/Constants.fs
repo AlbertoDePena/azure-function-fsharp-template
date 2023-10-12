@@ -53,8 +53,6 @@ module HttpMethod =
 module LogEvent =
     open Microsoft.Extensions.Logging
 
-    let DataAccessError = EventId(10000, "DataAccessError")
-
     let AuthenticationError = EventId(10401, "AuthenticationError")
 
     let AuthorizationError = EventId(10403, "AuthorizationError")

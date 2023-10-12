@@ -2,6 +2,7 @@
 
 open System
 open System.Data
+open System.Web.Http
 
 open Microsoft.Azure.WebJobs
 open Microsoft.Azure.WebJobs.Extensions.Http
@@ -14,12 +15,16 @@ open Microsoft.Extensions.Options
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Constants
+open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
-open MyFunctionApp.Invariants
-open MyFunctionApp.User.Domain
 
-open MyFunctionApp.Infrastructure.UserRepository
+open MyFunctionApp.Invariants
+open MyFunctionApp.Extensions
+open MyFunctionApp.User.Domain
+open MyFunctionApp.User.Storage
+open MyFunctionApp.Shared.DTOs
+open MyFunctionApp.User.DTOs
 
 type SayHello
     (
@@ -31,7 +36,9 @@ type SayHello
     ) =
 
     [<FunctionName(nameof SayHello)>]
-    member this.Run([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/SayHello")>] httpRequest: HttpRequest) =
+    member this.Run
+        ([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/SayHello")>] httpRequest: HttpRequest)
+        =
 
         httpRequestHandler.Handle httpRequest [ UserGroup.Viewer ] (fun userName ->
             async {
@@ -41,20 +48,56 @@ type SayHello
                     |> Result.valueOr failwith
 
                 let emailAddress =
-                    userName.Value
-                    |> EmailAddress.TryCreate
-                    |> Result.valueOr failwith
+                    userName.Value |> EmailAddress.TryCreate |> Result.valueOr failwith
 
-                let! userOption = UserRepository.tryFindByEmailAddress dbConnectionString emailAddress
+                let queryValidation =
+                    QueryRequest.toDomain
+                        { SearchCriteria =
+                            httpRequest.TryGetQueryStringValue "searchCriteria"
+                            |> Option.defaultValue String.defaultValue
+                          ActiveOnly =
+                            httpRequest.TryGetQueryStringValue "activeOnly"
+                            |> Option.bind (Boolean.TryParse >> Option.ofPair)
+                            |> Option.defaultValue false
+                          Page =
+                            httpRequest.TryGetQueryStringValue "page"
+                            |> Option.bind (Int32.TryParse >> Option.ofPair)
+                            |> Option.defaultValue 1
+                          PageSize =
+                            httpRequest.TryGetQueryStringValue "pageSize"
+                            |> Option.bind (Int32.TryParse >> Option.ofPair)
+                            |> Option.defaultValue 1
+                          SortBy =
+                            httpRequest.TryGetQueryStringValue "sortBy"
+                            |> Option.defaultValue String.defaultValue
+                          SortDirection =
+                            httpRequest.TryGetQueryStringValue "sortDirection"
+                            |> Option.defaultValue String.defaultValue }
 
-                let guid = Guid.NewGuid()
-                let correlationId = guid.ToString()
+                match queryValidation with
+                | Error errors ->
+                    return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
-                let message = applicationOptions.Value.Message
+                | Ok query ->
+                    let! pagedDataResult = UserStorage.search dbConnectionString query |> Async.Catch
 
-                telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
+                    match pagedDataResult with
+                    | Choice1Of2 pagedData ->
+                        let guid = Guid.NewGuid()
+                        let correlationId = guid.ToString()
 
-                logger.LogDebug("what it do? {CorrelationId}", correlationId)
+                        let pagedDataResponse =
+                            pagedData |> PagedDataResponse.fromDomain UserResponse.fromDomain
 
-                return OkObjectResult(message) :> IActionResult
+                        let message = applicationOptions.Value.Message
+
+                        telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
+
+                        logger.LogDebug("what it do? {CorrelationId}", correlationId)
+
+                        return OkObjectResult(pagedDataResponse) :> IActionResult
+
+                    | Choice2Of2 ex ->
+                        logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
+                        return InternalServerErrorResult() :> IActionResult
             })

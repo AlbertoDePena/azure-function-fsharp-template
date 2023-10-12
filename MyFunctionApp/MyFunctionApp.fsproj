@@ -10,22 +10,18 @@
 
 	<ItemGroup>
 		<Compile Include="Invariants.fs" />
+		<Compile Include="Extensions.fs" />
 		<Compile Include="Domain.fs" />
 		<Compile Include="UserDomain.fs" />
 		<Compile Include="SharedDTOs.fs" />
 		<Compile Include="UserDTOs.fs" />
-		<Compile Include="UserWorkflows.fs" />
 		<Compile Include="UserStorage.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
-		<Compile Include="Infrastructure/Exceptions.fs" />
-		<Compile Include="Infrastructure/Extensions.fs" />
 		<Compile Include="Infrastructure\Dapper.fs" />
 		<Compile Include="Infrastructure\Options.fs" />
-		<Compile Include="Infrastructure\UserRepository.fs" />
 		<Compile Include="Infrastructure/ObjectResults.fs" />
 		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
 		<Compile Include="Infrastructure/HttpRequestExtensions.fs" />
-		<Compile Include="Infrastructure/Authentication.fs" />
 		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
 		<Compile Include="Infrastructure/Telemetry.fs" />
 		<Compile Include="HttpTriggers/SayHello.fs" />

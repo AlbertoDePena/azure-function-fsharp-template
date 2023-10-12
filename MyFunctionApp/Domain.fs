@@ -3,6 +3,8 @@
 open System
 open MyFunctionApp.Invariants
 
+type StorageException = Exception
+
 [<RequireQualifiedAccess>]
 type SortDirection =
     | Ascending
@@ -30,7 +32,7 @@ type Query =
 type PagedData<'a> =
     { Page: PositiveNumber
       PageSize: PositiveNumber
-      TotalCount: PositiveNumber
+      TotalCount: WholeNumber
       SortBy: Text256 option
       SortDirection: SortDirection option
       Data: 'a list }

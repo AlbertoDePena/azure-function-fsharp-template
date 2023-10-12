@@ -1,30 +1,90 @@
 namespace MyFunctionApp.Infrastructure.HttpRequestHandler
 
+open System
 open System.Security.Claims
 open System.Web.Http
+
+open System.IdentityModel.Tokens.Jwt
+open System.Threading
 
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open Microsoft.ApplicationInsights
 
+open Microsoft.IdentityModel.Protocols
+open Microsoft.IdentityModel.Protocols.OpenIdConnect
+open Microsoft.IdentityModel.Tokens
+open Microsoft.Extensions.Options
+
 open FsToolkit.ErrorHandling
 
-open MyFunctionApp.Infrastructure.Exceptions
+open MyFunctionApp.Infrastructure.Options
 open MyFunctionApp.Infrastructure.Extensions
-open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Invariants
+open MyFunctionApp.Extensions
 open MyFunctionApp.User.Domain
 
+type AuthorizationException(ex: Exception) =
+    inherit Exception(ex.Message, ex)
+    new(message: string) = AuthorizationException(Exception message)
+
+type AuthenticationException(ex: Exception) =
+    inherit Exception(ex.Message, ex)
+    new(message: string) = AuthenticationException(Exception message)
+
 type HttpRequestHandler
-    (logger: ILogger<HttpRequestHandler>, telemetryClient: TelemetryClient, authentication: Authentication) =
+    (
+        logger: ILogger<HttpRequestHandler>,
+        azureAdOptions: IOptions<AzureAd>,
+        openIdConfigurationManager: IConfigurationManager<OpenIdConnectConfiguration>,
+        telemetryClient: TelemetryClient
+    ) =
 
     member this.Handle
         (httpRequest: HttpRequest)
         (userGroups: UserGroup list)
         (computation: UserName -> Async<IActionResult>)
         =
+
+        /// <exception cref="AuthenticationException"></exception>
+        let authenticate () =
+            async {
+                try
+                    match httpRequest.TryGetBearerToken() with
+                    | None -> return failwith "The HTTP request does not have a bearer token"
+                    | Some idToken ->
+
+                        let tokenValidator = JwtSecurityTokenHandler()
+
+                        let! openIdConfiguration =
+                            openIdConfigurationManager.GetConfigurationAsync(CancellationToken.None)
+                            |> Async.AwaitTask
+
+                        let validationParameters =
+                            TokenValidationParameters(
+                                RequireSignedTokens = true,
+                                ValidAudience = azureAdOptions.Value.ClientId,
+                                ValidateAudience = true,
+                                ValidateIssuer = true,
+                                ValidateIssuerSigningKey = true,
+                                IssuerSigningKeys = openIdConfiguration.SigningKeys,
+                                ValidIssuer = openIdConfiguration.Issuer
+                            )
+
+                        let mutable securityToken = Unchecked.defaultof<SecurityToken>
+
+                        let claimsPrincipal =
+                            tokenValidator.ValidateToken(idToken, validationParameters, ref securityToken)
+
+                        if not claimsPrincipal.Identity.IsAuthenticated then
+                            failwith "The user is not authenticated"
+
+                        return claimsPrincipal
+                with ex ->
+                    return (AuthenticationException ex |> raise)
+            }
 
         /// <exception cref="AuthenticationException"></exception>
         let getUserName (claimsPrincipal: ClaimsPrincipal) =
@@ -56,7 +116,7 @@ type HttpRequestHandler
         let computation =
             async {
                 try
-                    let! claimsPrincipal = authentication.Authenticate httpRequest
+                    let! claimsPrincipal = authenticate ()
 
                     let userName = getUserName claimsPrincipal
 
@@ -71,22 +131,20 @@ type HttpRequestHandler
                     return actionResult
                 with
                 | :? AuthenticationException as ex ->
-                    logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
+                    if logger.IsEnabled LogLevel.Debug then
+                        logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
 
                     return UnauthorizedResult() :> IActionResult
 
                 | :? AuthorizationException as ex ->
-                    logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
+                    if logger.IsEnabled LogLevel.Debug then
+                        logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
 
                     return ForbidResult() :> IActionResult
 
-                | :? DataAccessException as ex ->
-                    logger.LogError(LogEvent.DataAccessError, ex, ex.Message)
-
-                    return InternalServerErrorResult() :> IActionResult
-
                 | ex ->
-                    logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
+                    if logger.IsEnabled LogLevel.Error then
+                        logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
 
                     return InternalServerErrorResult() :> IActionResult
             }

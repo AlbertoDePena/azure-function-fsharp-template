@@ -6,9 +6,9 @@ type ApiMessageResponse = { Messages: string array }
 [<RequireQualifiedAccess>]
 module ApiMessageResponse =
 
-    let fromMessages (messages: string array) = { Messages = messages }
+    let fromMessages (messages: string list) = { Messages = List.toArray messages }
 
-    let fromMessage (message: string) = [| message |] |> fromMessages
+    let fromMessage (message: string) = List.singleton message |> fromMessages
 
 [<NoComparison>]
 [<CLIMutable>]
@@ -20,6 +20,35 @@ type PagedDataResponse<'a> =
       SortBy: string
       SortDirection: string
       Data: 'a array }
+
+[<RequireQualifiedAccess>]
+module PagedDataResponse =
+    open System
+    open FsToolkit.ErrorHandling
+    open MyFunctionApp.Extensions
+    open MyFunctionApp.Domain
+
+    let fromDomain mapping (source: PagedData<'a>) : PagedDataResponse<'b> =
+        { PageSize = source.PageSize.Value
+          Page = source.Page.Value
+          TotalCount = source.TotalCount.Value
+          NumberOfPages =
+            try
+                if (source.TotalCount.Value % source.PageSize.Value) = 0 then
+                    Convert.ToInt32((source.TotalCount.Value / source.PageSize.Value))
+                else
+                    Convert.ToInt32((source.TotalCount.Value / source.PageSize.Value)) + 1
+            with _ ->
+                0
+          SortBy =
+            source.SortBy
+            |> Option.map (fun x -> x.Value)
+            |> Option.defaultValue String.defaultValue
+          SortDirection =
+            source.SortDirection
+            |> Option.map (fun x -> x.Value)
+            |> Option.defaultValue String.defaultValue
+          Data = source.Data |> List.map mapping |> Array.ofList }
 
 [<CLIMutable>]
 type QueryRequest =

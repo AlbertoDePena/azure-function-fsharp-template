@@ -10,7 +10,6 @@ open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
 open MyFunctionApp.Infrastructure.Dapper
 open MyFunctionApp.Infrastructure.Telemetry
-open MyFunctionApp.Infrastructure.Authentication
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
 
@@ -60,8 +59,7 @@ type Startup() =
         |> ignore
 
         //builder.Services.AddHttpClient() |> ignore
-
-        builder.Services.AddSingleton<Authentication>() |> ignore        
+    
         builder.Services.AddTransient<HttpRequestHandler>() |> ignore
 
 [<assembly: FunctionsStartup(typeof<Startup>)>]

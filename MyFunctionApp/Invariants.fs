@@ -87,6 +87,8 @@ type PositiveNumber =
         match this with
         | PositiveNumber value -> value
 
+    static member DefaultValue = PositiveNumber 1
+
     static member TryCreate(value: int) =
         ConstraintTypes.createInteger "Positive Number" PositiveNumber 1 Int32.MaxValue value
 
@@ -131,3 +133,16 @@ type Text256 =
 
     static member TryCreateOption(value: string) =
         ConstraintTypes.createStringOption "Text" Text256 256 value
+
+type WholeNumber =
+    private
+    | WholeNumber of int
+
+    member this.Value =
+        match this with
+        | WholeNumber value -> value
+
+    static member DefaultValue = WholeNumber 0
+
+    static member TryCreate(value: int) =
+        ConstraintTypes.createInteger "Whole Number" WholeNumber 0 Int32.MaxValue value
