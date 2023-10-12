@@ -3,6 +3,7 @@
 open System
 open System.Data
 open System.Web.Http
+open System.Threading.Tasks
 
 open Microsoft.Azure.WebJobs
 open Microsoft.Azure.WebJobs.Extensions.Http
@@ -21,26 +22,28 @@ open MyFunctionApp.Infrastructure.Options
 
 open MyFunctionApp.Invariants
 open MyFunctionApp.Extensions
+open MyFunctionApp.Domain
 open MyFunctionApp.User.Domain
 open MyFunctionApp.User.Storage
 open MyFunctionApp.Shared.DTOs
 open MyFunctionApp.User.DTOs
 
-type SayHello
+type SearchUsers
     (
-        logger: ILogger<SayHello>,
+        logger: ILogger<SearchUsers>,
         databaseOptions: IOptions<Database>,
         httpRequestHandler: HttpRequestHandler,
         telemetryClient: TelemetryClient
     ) =
 
-    [<FunctionName(nameof SayHello)>]
+    [<FunctionName(nameof SearchUsers)>]
     member this.Run
-        ([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/SayHello")>] httpRequest: HttpRequest)
+        ([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/Users/Search")>] httpRequest:
+            HttpRequest)
         =
 
-        httpRequestHandler.Handle httpRequest [ UserGroup.Viewer ] (fun userName ->
-            async {
+        httpRequestHandler.HandleAsync httpRequest [ UserGroup.Viewer ] (fun userName ->
+            task {
                 let dbConnectionString =
                     databaseOptions.Value.ConnectionString
                     |> DbConnectionString.TryCreate
@@ -78,23 +81,23 @@ type SayHello
                     return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
                 | Ok query ->
-                    let! pagedDataChoice = UserStorage.search dbConnectionString query |> Async.Catch
+                    let! pagedDataStatus =
+                        UserStorage.getPagedData dbConnectionString query
+                        |> Task.handleException (fun ex -> logger.LogError(LogEvent.DataStorageError, ex, ex.Message))
 
-                    match pagedDataChoice with
-                    | Choice1Of2 pagedData ->
+                    match pagedDataStatus with
+                    | Task.TaskStatus.Completed pagedData ->
                         let guid = Guid.NewGuid()
                         let correlationId = guid.ToString()
 
                         let pagedDataResponse =
                             pagedData |> PagedDataResponse.fromDomain UserResponse.fromDomain
 
-                        telemetryClient.GetMetric(MetricName.SayHello).TrackValue(1) |> ignore
+                        telemetryClient.GetMetric(MetricName.SearchUsers).TrackValue(1) |> ignore
 
                         logger.LogDebug("what it do? {CorrelationId}", correlationId)
 
                         return OkObjectResult(pagedDataResponse) :> IActionResult
 
-                    | Choice2Of2 ex ->
-                        logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
-                        return InternalServerErrorResult() :> IActionResult
+                    | Task.TaskStatus.Failed -> return InternalServerErrorResult() :> IActionResult
             })

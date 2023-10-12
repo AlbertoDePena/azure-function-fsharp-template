@@ -48,6 +48,5 @@ module HttpRequestExtensions =
         member this.TryReadJsonAsAsync<'a>() =
             use reader = new StreamReader(this.Body)
 
-            reader.ReadToEndAsync()
-            |> Async.AwaitTask
-            |> Async.map (JsonConvert.DeserializeObject<'a> >> Option.ofNull)
+            reader.ReadToEndAsync()            
+            |> Task.map (JsonConvert.DeserializeObject<'a> >> Option.ofNull)

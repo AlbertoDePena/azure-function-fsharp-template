@@ -2,6 +2,7 @@ namespace MyFunctionApp.Infrastructure.HttpRequestHandler
 
 open System
 open System.Security.Claims
+open System.Threading.Tasks
 open System.Web.Http
 
 open System.IdentityModel.Tokens.Jwt
@@ -42,15 +43,15 @@ type HttpRequestHandler
         telemetryClient: TelemetryClient
     ) =
 
-    member this.Handle
+    member this.HandleAsync
         (httpRequest: HttpRequest)
         (userGroups: UserGroup list)
-        (computation: UserName -> Async<IActionResult>)
+        (getActionResultAsync: UserName -> Task<IActionResult>)
         =
 
         /// <exception cref="AuthenticationException"></exception>
-        let getClaimsPrincipal () =
-            async {
+        let getClaimsPrincipalAsync () =
+            task {
                 try
                     match httpRequest.TryGetBearerToken() with
                     | None -> return failwith "The HTTP request does not have a bearer token"
@@ -60,7 +61,6 @@ type HttpRequestHandler
 
                         let! openIdConfiguration =
                             openIdConfigurationManager.GetConfigurationAsync(CancellationToken.None)
-                            |> Async.AwaitTask
 
                         let validationParameters =
                             TokenValidationParameters(
@@ -113,40 +113,37 @@ type HttpRequestHandler
                     |> AuthorizationException
                     |> raise
 
-        let computation =
-            async {
-                try
-                    let! claimsPrincipal = getClaimsPrincipal ()
+        task {
+            try
+                let! claimsPrincipal = getClaimsPrincipalAsync ()
 
-                    let userName = getUserName claimsPrincipal
+                let userName = getUserName claimsPrincipal
 
-                    httpRequest.HttpContext.User <- claimsPrincipal
+                httpRequest.HttpContext.User <- claimsPrincipal
 
-                    telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
+                telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
 
-                    checkAuthorization claimsPrincipal userGroups
+                checkAuthorization claimsPrincipal userGroups
 
-                    let! actionResult = computation userName
+                let! actionResult = getActionResultAsync userName
 
-                    return actionResult
-                with
-                | :? AuthenticationException as ex ->
-                    if logger.IsEnabled LogLevel.Debug then
-                        logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
+                return actionResult
+            with
+            | :? AuthenticationException as ex ->
+                if logger.IsEnabled LogLevel.Debug then
+                    logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
 
-                    return UnauthorizedResult() :> IActionResult
+                return UnauthorizedResult() :> IActionResult
 
-                | :? AuthorizationException as ex ->
-                    if logger.IsEnabled LogLevel.Debug then
-                        logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
+            | :? AuthorizationException as ex ->
+                if logger.IsEnabled LogLevel.Debug then
+                    logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
 
-                    return ForbidResult() :> IActionResult
+                return ForbidResult() :> IActionResult
 
-                | ex ->
-                    if logger.IsEnabled LogLevel.Error then
-                        logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
+            | ex ->
+                if logger.IsEnabled LogLevel.Error then
+                    logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
 
-                    return InternalServerErrorResult() :> IActionResult
-            }
-
-        computation |> Async.StartAsTask
+                return InternalServerErrorResult() :> IActionResult
+        }

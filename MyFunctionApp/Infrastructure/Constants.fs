@@ -57,10 +57,12 @@ module LogEvent =
 
     let AuthorizationError = EventId(10403, "AuthorizationError")
 
+    let DataStorageError = EventId(10000, "DataStorageError")
+
     let InternalServerError = EventId(10500, "InternalServerError")
 
 [<RequireQualifiedAccess>]
 module MetricName =
 
     [<Literal>]
-    let SayHello = "MyApp.SayHello"
+    let SearchUsers = "MyFunctionApp.SearchUsers"

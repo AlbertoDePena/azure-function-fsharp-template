@@ -1,6 +1,7 @@
 ﻿namespace MyFunctionApp.User.Storage
 
 open System.Data
+open System.Threading.Tasks
 
 open Microsoft.Data.SqlClient
 open Dapper
@@ -13,9 +14,8 @@ open MyFunctionApp.User.Domain
 [<RequireQualifiedAccess>]
 module UserStorage =
 
-    let search (dbConnectionString: DbConnectionString) (query: Query) : Async<PagedData<User>> =
-        async {
-
+    let getPagedData (dbConnectionString: DbConnectionString) (query: Query) : Task<PagedData<User>> =
+        task {
             use connection = new SqlConnection(dbConnectionString.Value)
 
             let! gridReader =
@@ -30,14 +30,12 @@ module UserStorage =
                            SortDirection = query.SortDirection |},
                     commandType = CommandType.StoredProcedure
                 )
-                |> Async.AwaitTask
 
-            let! items = gridReader.ReadAsync<User>() |> Async.AwaitTask |> Async.map Seq.toList
+            let! items = gridReader.ReadAsync<User>() |> Task.map Seq.toList
 
             let! totalCount =
                 gridReader.ReadFirstOrDefaultAsync<int>()
-                |> Async.AwaitTask
-                |> Async.map (
+                |> Task.map (
                     Option.ofNull
                     >> Option.defaultValue 0
                     >> WholeNumber.TryCreate
