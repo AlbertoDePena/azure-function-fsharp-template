@@ -1,10 +1,7 @@
 ﻿namespace MyFunctionApp.Domain
 
-open System
 open FsToolkit.ErrorHandling
 open MyFunctionApp.Invariants
-
-type StorageException = Exception
 
 [<RequireQualifiedAccess>]
 type SortDirection =

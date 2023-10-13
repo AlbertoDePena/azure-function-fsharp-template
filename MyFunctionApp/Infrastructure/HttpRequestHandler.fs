@@ -21,19 +21,12 @@ open Microsoft.Extensions.Options
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Options
+open MyFunctionApp.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Invariants
 open MyFunctionApp.Extensions
 open MyFunctionApp.User.Domain
-
-type AuthorizationException(ex: Exception) =
-    inherit Exception(ex.Message, ex)
-    new(message: string) = AuthorizationException(Exception message)
-
-type AuthenticationException(ex: Exception) =
-    inherit Exception(ex.Message, ex)
-    new(message: string) = AuthenticationException(Exception message)
 
 type HttpRequestHandler
     (
@@ -140,6 +133,12 @@ type HttpRequestHandler
                     logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
 
                 return ForbidResult() :> IActionResult
+
+            | :? DataStorageException as ex ->
+                if logger.IsEnabled LogLevel.Error then
+                    logger.LogError(LogEvent.DataStorageError, ex, ex.Message)
+
+                return InternalServerErrorResult() :> IActionResult
 
             | ex ->
                 if logger.IsEnabled LogLevel.Error then

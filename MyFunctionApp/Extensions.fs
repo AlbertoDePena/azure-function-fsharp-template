@@ -33,23 +33,3 @@ module String =
 
     let toQueryString (query: (string * string) list) =
         System.String.Join("&", query |> List.map (fun (key, value) -> $"{key}={value}"))
-
-[<RequireQualifiedAccess>]
-module Task =
-    open System.Threading.Tasks
-    open FsToolkit.ErrorHandling
-
-    [<RequireQualifiedAccess>]
-    type Status<'a> =
-        | Completed of 'a
-        | Failed
-
-    let handleException (handler: exn -> unit) (task: Task<_>) =
-        task
-        |> Task.catch
-        |> Task.map (fun choice ->
-            match choice with
-            | Choice1Of2 x -> Status.Completed x
-            | Choice2Of2 ex ->
-                handler ex
-                Status.Failed)

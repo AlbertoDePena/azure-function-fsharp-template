@@ -81,23 +81,17 @@ type SearchUsers
                     return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
                 | Ok query ->
-                    let! pagedDataStatus =
-                        UserStorage.getPagedData dbConnectionString query
-                        |> Task.handleException (fun ex -> logger.LogError(LogEvent.DataStorageError, ex, ex.Message))
+                    let! pagedData = UserStorage.getPagedData dbConnectionString query
 
-                    match pagedDataStatus with
-                    | Task.Status.Completed pagedData ->
-                        let guid = Guid.NewGuid()
-                        let correlationId = guid.ToString()
+                    let guid = Guid.NewGuid()
+                    let correlationId = guid.ToString()
 
-                        let pagedDataResponse =
-                            pagedData |> PagedDataResponse.fromDomain UserResponse.fromDomain
+                    let pagedDataResponse =
+                        pagedData |> PagedDataResponse.fromDomain UserResponse.fromDomain
 
-                        telemetryClient.GetMetric(MetricName.SearchUsers).TrackValue(1) |> ignore
+                    telemetryClient.GetMetric(MetricName.SearchUsers).TrackValue(1) |> ignore
 
-                        logger.LogDebug("what it do? {CorrelationId}", correlationId)
+                    logger.LogDebug("what it do? {CorrelationId}", correlationId)
 
-                        return OkObjectResult(pagedDataResponse) :> IActionResult
-
-                    | Task.Status.Failed -> return InternalServerErrorResult() :> IActionResult
+                    return OkObjectResult(pagedDataResponse) :> IActionResult
             })

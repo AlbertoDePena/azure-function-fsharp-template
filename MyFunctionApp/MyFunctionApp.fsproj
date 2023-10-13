@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<Compile Include="Invariants.fs" />
+		<Compile Include="Exceptions.fs" />
 		<Compile Include="Extensions.fs" />
 		<Compile Include="Domain.fs" />
 		<Compile Include="UserDomain.fs" />

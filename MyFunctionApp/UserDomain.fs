@@ -1,6 +1,5 @@
 ﻿namespace MyFunctionApp.User.Domain
 
-open System
 open MyFunctionApp.Invariants
 
 [<RequireQualifiedAccess>]
