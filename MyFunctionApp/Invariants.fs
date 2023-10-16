@@ -141,4 +141,6 @@ module Alias =
 
     type DbConnectionString = Text
 
+    type DisplayName = Text256
+
     type UserName = Text256
