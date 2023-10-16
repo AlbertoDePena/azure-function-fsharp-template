@@ -133,9 +133,6 @@ module WholeNumber =
     let tryCreate fieldName x =
         ConstraintTypes.createInteger fieldName WholeNumber 0 Int32.MaxValue x
 
-    let tryCreateOption fieldName x =
-        ConstraintTypes.createInteger fieldName WholeNumber 0 Int32.MaxValue x
-
 [<AutoOpen>]
 module Alias =
 
