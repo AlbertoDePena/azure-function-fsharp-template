@@ -36,12 +36,15 @@ type PagedData<'a> =
       Data: 'a list }
 
     member this.CalculateNumberOfPages() =
-        let pageCount = this.TotalCount.Value / this.PageSize.Value
+        let pageCount =
+            WholeNumber.value this.TotalCount / PositiveNumber.value this.PageSize
 
-        let integer =            
-            if (this.TotalCount.Value % this.PageSize.Value) = 0 then
+        let integer =
+            if (WholeNumber.value this.TotalCount % PositiveNumber.value this.PageSize) = 0 then
                 pageCount
             else
                 pageCount + 1
 
-        integer |> WholeNumber.TryCreate |> Result.defaultValue WholeNumber.DefaultValue
+        integer
+        |> WholeNumber.tryCreate "Number of pages"
+        |> Result.defaultValue WholeNumber.defaultValue

@@ -6,21 +6,21 @@ open System
 module private ConstraintTypes =
 
     /// Create a constrained string using the constructor provided.
-    /// Return Error if input is null/empty or length > maxLength.
-    let createString fieldName ctor maxLength value =
-        if String.IsNullOrEmpty(value) then
-            Error(sprintf "%s is required and cannot empty" fieldName)
+    /// Return Error if input is null or length > maxLength.
+    let createString fieldName ctor maxLength (value: string) =
+        if isNull value then
+            Error(sprintf "%s is required" fieldName)
         elif value.Length > maxLength then
             Error(sprintf "%s must not be more than %i characters" fieldName maxLength)
         else
             Ok(ctor value)
 
     /// Create a optional constrained string using the constructor provided.
-    /// Return Ok None if input is null/empty.
+    /// Return Ok None if input is null.
     /// Return Error if length > maxLength.
     /// Return Ok Some if the input is valid.
-    let createStringOption fieldName ctor maxLength value =
-        if String.IsNullOrEmpty(value) then
+    let createStringOption fieldName ctor maxLength (value: string) =
+        if isNull value then
             Ok None
         elif value.Length > maxLength then
             Error(sprintf "%s must not be more than %i characters" fieldName maxLength)
@@ -28,10 +28,10 @@ module private ConstraintTypes =
             Ok(ctor value |> Some)
 
     /// Create a constrained string using the constructor provided.
-    /// Return Error if input is null/empty or does not match the regular expression pattern.
+    /// Return Error if input is null or does not match the regular expression pattern.
     let createStringLike fieldName ctor pattern value =
-        if String.IsNullOrEmpty(value) then
-            Error(sprintf "%s is required and cannot be empty" fieldName)
+        if isNull value then
+            Error(sprintf "%s is required" fieldName)
         elif System.Text.RegularExpressions.Regex.IsMatch(value, pattern) then
             Ok(ctor value)
         else
@@ -57,92 +57,88 @@ module private ConstraintTypes =
         else
             Ok(ctor value)
 
-type DbConnectionString =
-    private
-    | DbConnectionString of string
+type EmailAddress = private EmailAddress of string
 
-    member this.Value =
-        match this with
-        | DbConnectionString value -> value
+[<RequireQualifiedAccess>]
+module EmailAddress =
 
-    static member TryCreate(value: string) =
-        ConstraintTypes.createString "Database Connection String" DbConnectionString Int32.MaxValue value
+    let value (EmailAddress x) = x
 
-type EmailAddress =
-    private
-    | EmailAddress of string
+    let tryCreate (x: string) =
+        ConstraintTypes.createStringLike "Email address" EmailAddress @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" x
 
-    member this.Value =
-        match this with
-        | EmailAddress value -> value
+type PositiveNumber = private PositiveNumber of int
 
-    static member TryCreate(value: string) =
-        ConstraintTypes.createStringLike "Email Address" EmailAddress @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" value
+[<RequireQualifiedAccess>]
+module PositiveNumber =
 
-type PositiveNumber =
-    private
-    | PositiveNumber of int
+    let defaultValue = PositiveNumber 1
 
-    member this.Value =
-        match this with
-        | PositiveNumber value -> value
+    let value (PositiveNumber x) = x
 
-    static member DefaultValue = PositiveNumber 1
+    let tryCreate fieldName x =
+        ConstraintTypes.createInteger fieldName PositiveNumber 1 Int32.MaxValue x
 
-    static member TryCreate(value: int) =
-        ConstraintTypes.createInteger "Positive Number" PositiveNumber 1 Int32.MaxValue value
+type Text = private Text of string
 
-type UniqueId =
-    private
-    | UniqueId of Guid
+[<RequireQualifiedAccess>]
+module Text =
 
-    member this.Value =
-        match this with
-        | UniqueId value -> value
+    let value (Text x) = x
 
-    static member TryCreate(value: Guid) =
-        if value <> Guid.Empty then
-            value |> UniqueId |> Ok
+    let tryCreate fieldName x =
+        ConstraintTypes.createString fieldName Text Int32.MaxValue x
+
+    let tryCreateOption fieldName x =
+        ConstraintTypes.createStringOption fieldName Text Int32.MaxValue x
+
+type Text256 = private Text256 of string
+
+[<RequireQualifiedAccess>]
+module Text256 =
+
+    let value (Text256 x) = x
+
+    let tryCreate fieldName x =
+        ConstraintTypes.createString fieldName Text256 256 x
+
+    let tryCreateOption fieldName x =
+        ConstraintTypes.createStringOption fieldName Text256 256 x
+
+type UniqueId = private UniqueId of Guid
+
+[<RequireQualifiedAccess>]
+module UniqueId =
+
+    let value (UniqueId x) = x
+
+    let tryCreate (x: Guid) =
+        if x <> Guid.Empty then
+            x |> UniqueId |> Ok
         else
             Error "The unique identifier cannot be empty"
 
-    static member Create() =
+    let create () =
         RT.Comb.Provider.Sql.Create() |> UniqueId
 
-type UserName =
-    private
-    | UserName of string
+type WholeNumber = private WholeNumber of int
 
-    member this.Value =
-        match this with
-        | UserName value -> value
+[<RequireQualifiedAccess>]
+module WholeNumber =
 
-    static member TryCreate(value: string) =
-        ConstraintTypes.createString "User Name" UserName 256 value
+    let defaultValue = WholeNumber 0
 
-type Text256 =
-    private
-    | Text256 of string
+    let value (WholeNumber x) = x
 
-    member this.Value =
-        match this with
-        | Text256 value -> value
+    let tryCreate fieldName x =
+        ConstraintTypes.createInteger fieldName WholeNumber 0 Int32.MaxValue x
 
-    static member TryCreate(value: string) =
-        ConstraintTypes.createString "Text" Text256 256 value
+    let tryCreateOption fieldName x =
+        ConstraintTypes.createInteger fieldName WholeNumber 0 Int32.MaxValue x
 
-    static member TryCreateOption(value: string) =
-        ConstraintTypes.createStringOption "Text" Text256 256 value
+[<AutoOpen>]
+module Alias =
 
-type WholeNumber =
-    private
-    | WholeNumber of int
+    type DbConnectionString = Text
 
-    member this.Value =
-        match this with
-        | WholeNumber value -> value
-
-    static member DefaultValue = WholeNumber 0
-
-    static member TryCreate(value: int) =
-        ConstraintTypes.createInteger "Whole Number" WholeNumber 0 Int32.MaxValue value
+    type UserName = Text256

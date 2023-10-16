@@ -25,16 +25,17 @@ type PagedDataResponse<'a> =
 module PagedDataResponse =    
     open FsToolkit.ErrorHandling
     open MyFunctionApp.Extensions
+    open MyFunctionApp.Invariants
     open MyFunctionApp.Domain
 
     let fromDomain mapping (source: PagedData<'a>) : PagedDataResponse<'b> =
-        { PageSize = source.PageSize.Value
-          Page = source.Page.Value
-          TotalCount = source.TotalCount.Value
-          NumberOfPages = source.CalculateNumberOfPages().Value
+        { PageSize = PositiveNumber.value source.PageSize
+          Page = PositiveNumber.value source.Page
+          TotalCount = WholeNumber.value source.TotalCount
+          NumberOfPages = source.CalculateNumberOfPages() |> WholeNumber.value
           SortBy =
             source.SortBy
-            |> Option.map (fun x -> x.Value)
+            |> Option.map Text256.value
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
@@ -59,10 +60,10 @@ module QueryRequest =
 
     let toDomain (query: QueryRequest) : Validation<Query, string> =
         validation {
-            let! searchCriteria = query.SearchCriteria |> Text256.TryCreateOption
-            and! page = query.Page |> PositiveNumber.TryCreate
-            and! pageSize = query.PageSize |> PositiveNumber.TryCreate
-            and! sortBy = query.SortBy |> Text256.TryCreateOption
+            let! searchCriteria = query.SearchCriteria |> Text256.tryCreateOption "Search criteria"
+            and! page = query.Page |> PositiveNumber.tryCreate "Page"
+            and! pageSize = query.PageSize |> PositiveNumber.tryCreate "Page size"
+            and! sortBy = query.SortBy |> Text256.tryCreateOption "Sort by"
 
             let sortDirection = query.SortDirection |> SortDirection.FromString
 

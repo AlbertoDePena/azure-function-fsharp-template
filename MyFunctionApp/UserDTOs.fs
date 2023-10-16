@@ -1,6 +1,7 @@
 ﻿namespace MyFunctionApp.User.DTOs
 
 open System
+open MyFunctionApp.Invariants
 open MyFunctionApp.User.Domain
 
 [<CLIMutable>]
@@ -14,9 +15,9 @@ type UserResponse =
 module UserResponse =
 
     let fromDomain (model: User) : UserResponse =
-        { Id = model.Id.Value
-          EmailAddress = model.EmailAddress.Value
-          DisplayName = model.DisplayName.Value
+        { Id = model.Id |> UniqueId.value
+          EmailAddress = model.EmailAddress |> EmailAddress.value
+          DisplayName = model.DisplayName |> Text256.value
           Type = model.Type.Value }
 
 [<NoComparison>]
@@ -35,9 +36,9 @@ module UserDetailsResponse =
     let fromDomain (models: UserDetails list) : UserDetailsResponse seq =
         models
         |> List.map (fun model ->
-            { Id = model.User.Id.Value
-              EmailAddress = model.User.EmailAddress.Value
-              DisplayName = model.User.DisplayName.Value
+            { Id = model.User.Id |> UniqueId.value
+              EmailAddress = model.User.EmailAddress |> EmailAddress.value
+              DisplayName = model.User.DisplayName |> Text256.value
               Type = model.User.Type.Value
               Permissions = model.Permissions |> List.map (fun permission -> permission.Value) |> Seq.ofList
               Groups = model.Groups |> List.map (fun group -> group.Value) |> Seq.ofList })

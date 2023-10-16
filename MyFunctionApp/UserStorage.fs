@@ -19,7 +19,7 @@ module UserStorage =
     let getPagedData (dbConnectionString: DbConnectionString) (query: Query) : Task<PagedData<User>> =
         task {
             try
-                use connection = new SqlConnection(dbConnectionString.Value)
+                use connection = new SqlConnection(Text.value dbConnectionString)
 
                 let! gridReader =
                     connection.QueryMultipleAsync(
@@ -41,8 +41,8 @@ module UserStorage =
                     |> Task.map (
                         Option.ofNull
                         >> Option.defaultValue 0
-                        >> WholeNumber.TryCreate
-                        >> Result.defaultValue WholeNumber.DefaultValue
+                        >> WholeNumber.tryCreate "Total count"
+                        >> Result.defaultValue WholeNumber.defaultValue
                     )
 
                 return
@@ -63,12 +63,12 @@ module UserStorage =
         : Task<UserDetails option> =
         task {
             try
-                use connection = new SqlConnection(dbConnectionString.Value)
+                use connection = new SqlConnection(Text.value dbConnectionString)
 
                 let! gridReader =
                     connection.QueryMultipleAsync(
                         "dbo.Users_FindByEmailAddress",
-                        param = {| EmailAddress = emailAddress.Value |},
+                        param = {| EmailAddress = EmailAddress.value emailAddress |},
                         commandType = CommandType.StoredProcedure
                     )
 

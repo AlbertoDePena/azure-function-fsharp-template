@@ -80,10 +80,10 @@ type HttpRequestHandler
             }
 
         /// <exception cref="AuthenticationException"></exception>
-        let getUserName (claimsPrincipal: ClaimsPrincipal) =
+        let getUserName (claimsPrincipal: ClaimsPrincipal) : UserName =
             claimsPrincipal.TryGetClaimValue ClaimType.EmailAddress
             |> Option.defaultValue String.defaultValue
-            |> UserName.TryCreate
+            |> Text256.tryCreate "User name"
             |> Result.valueOr (AuthenticationException >> raise)
 
         /// <exception cref="AuthorizationException"></exception>
@@ -114,7 +114,7 @@ type HttpRequestHandler
 
                 httpRequest.HttpContext.User <- claimsPrincipal
 
-                telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
+                telemetryClient.Context.User.AuthenticatedUserId <- (Text256.value userName)
 
                 checkAuthorization claimsPrincipal userGroups
 
