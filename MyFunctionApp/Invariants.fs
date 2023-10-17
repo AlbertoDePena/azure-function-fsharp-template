@@ -7,7 +7,7 @@ module private ConstraintTypes =
 
     /// Create a constrained string using the constructor provided.
     /// Return Error if input is null or length > maxLength.
-    let createString fieldName ctor maxLength (value: string) =
+    let createBoundedString fieldName ctor maxLength (value: string) =
         if isNull value then
             Error(sprintf "%s is required" fieldName)
         elif value.Length > maxLength then
@@ -19,7 +19,7 @@ module private ConstraintTypes =
     /// Return Ok None if input is null.
     /// Return Error if length > maxLength.
     /// Return Ok Some if the input is valid.
-    let createStringOption fieldName ctor maxLength (value: string) =
+    let createOptionalBoundedString fieldName ctor maxLength (value: string) =
         if isNull value then
             Ok None
         elif value.Length > maxLength then
@@ -67,6 +67,9 @@ module EmailAddress =
     let tryCreate (x: string) =
         ConstraintTypes.createStringLike "Email address" EmailAddress @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" x
 
+    let tryCreateOption (x: string) =
+        if isNull x then Ok None else tryCreate x |> Result.map Some
+
 type PositiveNumber = private PositiveNumber of int
 
 [<RequireQualifiedAccess>]
@@ -87,10 +90,10 @@ module Text =
     let value (Text x) = x
 
     let tryCreate fieldName x =
-        ConstraintTypes.createString fieldName Text Int32.MaxValue x
+        ConstraintTypes.createBoundedString fieldName Text Int32.MaxValue x
 
     let tryCreateOption fieldName x =
-        ConstraintTypes.createStringOption fieldName Text Int32.MaxValue x
+        ConstraintTypes.createOptionalBoundedString fieldName Text Int32.MaxValue x
 
 type Text256 = private Text256 of string
 
@@ -100,10 +103,10 @@ module Text256 =
     let value (Text256 x) = x
 
     let tryCreate fieldName x =
-        ConstraintTypes.createString fieldName Text256 256 x
+        ConstraintTypes.createBoundedString fieldName Text256 256 x
 
     let tryCreateOption fieldName x =
-        ConstraintTypes.createStringOption fieldName Text256 256 x
+        ConstraintTypes.createOptionalBoundedString fieldName Text256 256 x
 
 type UniqueId = private UniqueId of Guid
 
