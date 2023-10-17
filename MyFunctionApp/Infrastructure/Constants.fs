@@ -17,10 +17,7 @@ module ClaimType =
 module ClaimValue =
 
     [<Literal>]
-    let PotentialDelayAdministrator = "Potential-Delay-Administrator"
-
-    [<Literal>]
-    let PotentialDelayApprover = "Potential-Delay-Approver"
+    let Administrator = "Administrator"
 
     [<Literal>]
     let Viewer = "Viewer"

@@ -94,8 +94,7 @@ type HttpRequestHandler
                     match userGroup with
                     | UserGroup.Viewer -> ClaimValue.Viewer
                     | UserGroup.Editor -> ClaimValue.Editor
-                    | UserGroup.PotentialDelayAdministrator -> ClaimValue.PotentialDelayAdministrator
-                    | UserGroup.PotentialDelayApprover -> ClaimValue.PotentialDelayApprover)
+                    | UserGroup.Administrator -> ClaimValue.Administrator)
 
             claimsPrincipal.FindAll(fun claim -> claim.Type = ClaimType.Role)
             |> Seq.ofNull

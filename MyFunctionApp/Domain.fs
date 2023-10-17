@@ -35,12 +35,15 @@ type PagedData<'a> =
       SortDirection: SortDirection option
       Data: 'a list }
 
-    member this.CalculateNumberOfPages() =
+[<RequireQualifiedAccess>]
+module PagedData =
+
+    let calculateNumberOfPages (pagedData: PagedData<'a>) =
         let pageCount =
-            WholeNumber.value this.TotalCount / PositiveNumber.value this.PageSize
+            WholeNumber.value pagedData.TotalCount / PositiveNumber.value pagedData.PageSize
 
         let integer =
-            if (WholeNumber.value this.TotalCount % PositiveNumber.value this.PageSize) = 0 then
+            if (WholeNumber.value pagedData.TotalCount % PositiveNumber.value pagedData.PageSize) = 0 then
                 pageCount
             else
                 pageCount + 1

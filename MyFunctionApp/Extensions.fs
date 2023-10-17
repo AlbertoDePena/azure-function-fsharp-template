@@ -29,6 +29,7 @@ module String =
         let letter = character.ToString().ToUpper()
         letter + value.Substring(1)
 
+    /// The default value of a primitive string is null
     let defaultValue = null
 
     let toQueryString (query: (string * string) list) =

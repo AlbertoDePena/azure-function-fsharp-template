@@ -6,38 +6,35 @@ open MyFunctionApp.Invariants
 type UserGroup =    
     | Viewer
     | Editor
-    | PotentialDelayAdministrator
-    | PotentialDelayApprover
+    | Administrator
 
     member this.Value =
         match this with
         | Viewer -> "Viewer"
         | Editor -> "Editor"
-        | PotentialDelayAdministrator -> "Potential Delay Administrator"
-        | PotentialDelayApprover -> "Potential Delay Approver"
+        | Administrator -> "Administrator"
 
     static member FromString (value: string) =
         match value with
         | "Viewer" -> Some Viewer
         | "Editor" -> Some Editor
-        | "Potential Delay Administrator" -> Some PotentialDelayAdministrator
-        | "Potential Delay Approver" -> Some PotentialDelayApprover
+        | "Administrator" -> Some Administrator
         | _ -> None
 
 [<RequireQualifiedAccess>]
 type UserType =    
-    | Client
-    | CraneEmployee
+    | Customer
+    | Employee
 
     member this.Value =
         match this with
-        | Client -> "Client"
-        | CraneEmployee -> "Crane Employee"
+        | Customer -> "Customer"
+        | Employee -> "Employee"
 
     static member FromString (value: string) =
         match value with
-        | "Client" -> Some Client
-        | "Crane Employee" -> Some CraneEmployee
+        | "Customer" -> Some Customer
+        | "Employee" -> Some Employee
         | _ -> None
 
 [<RequireQualifiedAccess>]

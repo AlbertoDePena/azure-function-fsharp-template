@@ -32,7 +32,7 @@ module PagedDataResponse =
         { PageSize = PositiveNumber.value source.PageSize
           Page = PositiveNumber.value source.Page
           TotalCount = WholeNumber.value source.TotalCount
-          NumberOfPages = source.CalculateNumberOfPages() |> WholeNumber.value
+          NumberOfPages = source |> PagedData.calculateNumberOfPages |> WholeNumber.value
           SortBy =
             source.SortBy
             |> Option.map Text256.value
