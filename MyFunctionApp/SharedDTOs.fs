@@ -35,7 +35,7 @@ module PagedDataResponse =
           NumberOfPages = source |> PagedData.calculateNumberOfPages |> WholeNumber.value
           SortBy =
             source.SortBy
-            |> Option.map Text256.value
+            |> Option.map Text.value
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
@@ -70,10 +70,10 @@ module QueryRequest =
             let sortDirection = query.SortDirection |> SortDirection.FromString
 
             return
-                { SearchCriteria = query.SearchCriteria |> Text256.tryCreate
+                { SearchCriteria = query.SearchCriteria |> Text.tryCreate
                   ActiveOnly = query.ActiveOnly
                   Page = page
                   PageSize = pageSize
-                  SortBy = query.SortBy |> Text256.tryCreate
+                  SortBy = query.SortBy |> Text.tryCreate
                   SortDirection = sortDirection }
         }

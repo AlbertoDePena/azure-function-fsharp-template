@@ -62,7 +62,7 @@ type UserPermission =
 type User =
     { Id: UniqueId
       EmailAddress: EmailAddress
-      DisplayName: DisplayName
+      DisplayName: Text
       Type: UserType }
 
 type UserDetails =

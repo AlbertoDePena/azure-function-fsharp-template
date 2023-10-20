@@ -51,7 +51,7 @@ type SearchUsers
 
                 let emailAddress =
                     userName
-                    |> Text256.value
+                    |> Text.value
                     |> EmailAddress.tryCreate
                     |> Option.defaultWith (fun () -> failwith "The user name is not a proper email address")
 

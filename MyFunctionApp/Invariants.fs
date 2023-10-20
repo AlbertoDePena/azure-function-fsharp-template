@@ -37,23 +37,32 @@ type Text = private Text of string
 
 [<RequireQualifiedAccess>]
 module Text =
+    
+    /// <summary>Text's default value is the empty string</summary>
+    let defaultValue = Text String.Empty
 
+    /// <summary>Unwrap the primitive string from Text</summary>
     let value (Text x) = x
 
+    /// <summary>Return the primitive string when Some string otherwise return null when None</summary>
+    let valueOrNull (text: Text option) =
+        text |> Option.map value |> Option.defaultValue null
+
+    /// <summary>Try to convert a potentially null string to Text</summary>
     let tryCreate (value: string) =
         if isNull value then None else Some(Text value)
 
-type Text256 = private Text256 of string
+    /// <summary>Convert a potentially null string to Text</summary>
+    /// <exception cref="System.Exception">Throw exception when the string is null</exception>
+    let tryCreateOrThrow exceptionMessage value =
+        value |> tryCreate |> Option.defaultWith (fun () -> failwith exceptionMessage)
 
-[<RequireQualifiedAccess>]
-module Text256 =
-
-    let value (Text256 x) = x
-
-    let tryCreate (value: string) =
-        if isNull value then None
-        elif value.Length > 256 then None
-        else Some(Text256 value)
+    /// <summary>Apply the function to the Text</summary>
+    /// <exception cref="System.Exception">Throw exception when the transformed string is null</exception>
+    let transform (transformer: string -> string) (Text value) =
+        match transformer value with
+        | null -> failwith "The transformed string cannot be null"
+        | transformed -> Text transformed
 
 type UniqueId = private UniqueId of Guid
 
@@ -85,6 +94,6 @@ module Alias =
 
     type DbConnectionString = Text
 
-    type DisplayName = Text256
+    type DisplayName = Text
 
-    type UserName = Text256
+    type UserName = Text

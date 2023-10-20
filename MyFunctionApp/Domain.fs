@@ -20,18 +20,18 @@ type SortDirection =
         | _ -> None
 
 type Query =
-    { SearchCriteria: Text256 option
+    { SearchCriteria: Text option
       ActiveOnly: bool
       Page: PositiveNumber
       PageSize: PositiveNumber
-      SortBy: Text256 option
+      SortBy: Text option
       SortDirection: SortDirection option }
 
 type PagedData<'a> =
     { Page: PositiveNumber
       PageSize: PositiveNumber
       TotalCount: WholeNumber
-      SortBy: Text256 option
+      SortBy: Text option
       SortDirection: SortDirection option
       Data: 'a list }
 

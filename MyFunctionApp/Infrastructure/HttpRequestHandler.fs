@@ -83,7 +83,7 @@ type HttpRequestHandler
         let getUserName (claimsPrincipal: ClaimsPrincipal) : UserName =
             claimsPrincipal.TryGetClaimValue ClaimType.EmailAddress
             |> Option.defaultValue String.defaultValue
-            |> Text256.tryCreate
+            |> Text.tryCreate
             |> Option.defaultWith (fun () ->
                 AuthenticationException "Email address not found in the claims principal"
                 |> raise)
@@ -115,7 +115,7 @@ type HttpRequestHandler
 
                 httpRequest.HttpContext.User <- claimsPrincipal
 
-                telemetryClient.Context.User.AuthenticatedUserId <- (Text256.value userName)
+                telemetryClient.Context.User.AuthenticatedUserId <- (Text.value userName)
 
                 checkAuthorization claimsPrincipal userGroups
 

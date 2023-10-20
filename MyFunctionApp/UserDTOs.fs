@@ -17,7 +17,7 @@ module UserResponse =
     let fromDomain (model: User) : UserResponse =
         { Id = model.Id |> UniqueId.value
           EmailAddress = model.EmailAddress |> EmailAddress.value
-          DisplayName = model.DisplayName |> Text256.value
+          DisplayName = model.DisplayName |> Text.value
           Type = model.Type.Value }
 
 [<NoComparison>]
@@ -38,7 +38,7 @@ module UserDetailsResponse =
         |> List.map (fun model ->
             { Id = model.User.Id |> UniqueId.value
               EmailAddress = model.User.EmailAddress |> EmailAddress.value
-              DisplayName = model.User.DisplayName |> Text256.value
+              DisplayName = model.User.DisplayName |> Text.value
               Type = model.User.Type.Value
               Permissions = model.Permissions |> List.map (fun permission -> permission.Value) |> Seq.ofList
               Groups = model.Groups |> List.map (fun group -> group.Value) |> Seq.ofList })
