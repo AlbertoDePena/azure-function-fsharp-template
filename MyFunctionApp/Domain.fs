@@ -49,5 +49,5 @@ module PagedData =
                 pageCount + 1
 
         integer
-        |> WholeNumber.tryCreate "Number of pages"
-        |> Result.defaultValue WholeNumber.defaultValue
+        |> WholeNumber.tryCreate
+        |> Option.defaultValue WholeNumber.defaultValue

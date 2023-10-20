@@ -83,8 +83,10 @@ type HttpRequestHandler
         let getUserName (claimsPrincipal: ClaimsPrincipal) : UserName =
             claimsPrincipal.TryGetClaimValue ClaimType.EmailAddress
             |> Option.defaultValue String.defaultValue
-            |> Text256.tryCreate "User name"
-            |> Result.valueOr (AuthenticationException >> raise)
+            |> Text256.tryCreate
+            |> Option.defaultWith (fun () ->
+                AuthenticationException "Email address not found in the claims principal"
+                |> raise)
 
         /// <exception cref="AuthorizationException"></exception>
         let checkAuthorization (claimsPrincipal: ClaimsPrincipal) (userGroups: UserGroup list) =

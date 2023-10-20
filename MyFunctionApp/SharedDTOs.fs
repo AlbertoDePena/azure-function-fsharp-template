@@ -22,7 +22,7 @@ type PagedDataResponse<'a> =
       Data: 'a array }
 
 [<RequireQualifiedAccess>]
-module PagedDataResponse =    
+module PagedDataResponse =
     open FsToolkit.ErrorHandling
     open MyFunctionApp.Extensions
     open MyFunctionApp.Invariants
@@ -60,18 +60,20 @@ module QueryRequest =
 
     let toDomain (query: QueryRequest) : Validation<Query, string> =
         validation {
-            let! searchCriteria = query.SearchCriteria |> Text256.tryCreateOption "Search criteria"
-            and! page = query.Page |> PositiveNumber.tryCreate "Page"
-            and! pageSize = query.PageSize |> PositiveNumber.tryCreate "Page size"
-            and! sortBy = query.SortBy |> Text256.tryCreateOption "Sort by"
+            let! page = query.Page |> PositiveNumber.tryCreate |> Result.requireSome "Page is required"
+
+            and! pageSize =
+                query.PageSize
+                |> PositiveNumber.tryCreate
+                |> Result.requireSome "Page size is required"
 
             let sortDirection = query.SortDirection |> SortDirection.FromString
 
             return
-                { SearchCriteria = searchCriteria
+                { SearchCriteria = query.SearchCriteria |> Text256.tryCreate
                   ActiveOnly = query.ActiveOnly
                   Page = page
                   PageSize = pageSize
-                  SortBy = sortBy
+                  SortBy = query.SortBy |> Text256.tryCreate
                   SortDirection = sortDirection }
         }

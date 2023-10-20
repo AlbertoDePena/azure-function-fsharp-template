@@ -2,61 +2,6 @@ namespace MyFunctionApp.Invariants
 
 open System
 
-[<RequireQualifiedAccess>]
-module private ConstraintTypes =
-
-    /// Create a constrained string using the constructor provided.
-    /// Return Error if input is null or length > maxLength.
-    let createBoundedString fieldName ctor maxLength (value: string) =
-        if isNull value then
-            Error(sprintf "%s is required" fieldName)
-        elif value.Length > maxLength then
-            Error(sprintf "%s must not be more than %i characters" fieldName maxLength)
-        else
-            Ok(ctor value)
-
-    /// Create a optional constrained string using the constructor provided.
-    /// Return Ok None if input is null.
-    /// Return Error if length > maxLength.
-    /// Return Ok Some if the input is valid.
-    let createOptionalBoundedString fieldName ctor maxLength (value: string) =
-        if isNull value then
-            Ok None
-        elif value.Length > maxLength then
-            Error(sprintf "%s must not be more than %i characters" fieldName maxLength)
-        else
-            Ok(ctor value |> Some)
-
-    /// Create a constrained string using the constructor provided.
-    /// Return Error if input is null or does not match the regular expression pattern.
-    let createStringLike fieldName ctor pattern value =
-        if isNull value then
-            Error(sprintf "%s is required" fieldName)
-        elif System.Text.RegularExpressions.Regex.IsMatch(value, pattern) then
-            Ok(ctor value)
-        else
-            Error(sprintf "%s: '%s' must match the pattern '%s'" fieldName value pattern)
-
-    /// Create a constrained integer using the constructor provided.
-    /// Return Error if the input is less than minValue or more than maxValue.
-    let createInteger fieldName ctor minValue maxValue value =
-        if value < minValue then
-            Error(sprintf "%s: must not be less than %i" fieldName minValue)
-        elif value > maxValue then
-            Error(sprintf "%s: must not be greater than %i" fieldName maxValue)
-        else
-            Ok(ctor value)
-
-    /// Create a constrained decimal using the constructor provided.
-    /// Return Error if the input is less than minValue or more than maxValue.
-    let createDecimal fieldName ctor minValue maxValue value =
-        if value < minValue then
-            Error(sprintf "%s: must not be less than %M" fieldName minValue)
-        elif value > maxValue then
-            Error(sprintf "%s: must not be greater than %M" fieldName maxValue)
-        else
-            Ok(ctor value)
-
 type EmailAddress = private EmailAddress of string
 
 [<RequireQualifiedAccess>]
@@ -64,11 +9,17 @@ module EmailAddress =
 
     let value (EmailAddress x) = x
 
-    let tryCreate (x: string) =
-        ConstraintTypes.createStringLike "Email address" EmailAddress @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$" x
-
-    let tryCreateOption (x: string) =
-        if isNull x then Ok None else tryCreate x |> Result.map Some
+    let tryCreate (value: string) =
+        if isNull value then
+            None
+        elif
+            System.Text.RegularExpressions.Regex.IsMatch(value, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")
+            |> not
+        then
+            None
+        else
+            let emailAddress = value.ToLower()
+            Some(EmailAddress emailAddress)
 
 type PositiveNumber = private PositiveNumber of int
 
@@ -79,8 +30,8 @@ module PositiveNumber =
 
     let value (PositiveNumber x) = x
 
-    let tryCreate fieldName x =
-        ConstraintTypes.createInteger fieldName PositiveNumber 1 Int32.MaxValue x
+    let tryCreate value =
+        if value < 1 then None else Some(PositiveNumber value)
 
 type Text = private Text of string
 
@@ -89,11 +40,8 @@ module Text =
 
     let value (Text x) = x
 
-    let tryCreate fieldName x =
-        ConstraintTypes.createBoundedString fieldName Text Int32.MaxValue x
-
-    let tryCreateOption fieldName x =
-        ConstraintTypes.createOptionalBoundedString fieldName Text Int32.MaxValue x
+    let tryCreate (value: string) =
+        if isNull value then None else Some(Text value)
 
 type Text256 = private Text256 of string
 
@@ -102,11 +50,10 @@ module Text256 =
 
     let value (Text256 x) = x
 
-    let tryCreate fieldName x =
-        ConstraintTypes.createBoundedString fieldName Text256 256 x
-
-    let tryCreateOption fieldName x =
-        ConstraintTypes.createOptionalBoundedString fieldName Text256 256 x
+    let tryCreate (value: string) =
+        if isNull value then None
+        elif value.Length > 256 then None
+        else Some(Text256 value)
 
 type UniqueId = private UniqueId of Guid
 
@@ -115,11 +62,8 @@ module UniqueId =
 
     let value (UniqueId x) = x
 
-    let tryCreate (x: Guid) =
-        if x <> Guid.Empty then
-            x |> UniqueId |> Ok
-        else
-            Error "The unique identifier cannot be empty"
+    let tryCreate (value: Guid) =
+        if value = Guid.Empty then None else Some(UniqueId value)
 
     let create () =
         RT.Comb.Provider.Sql.Create() |> UniqueId
@@ -133,8 +77,8 @@ module WholeNumber =
 
     let value (WholeNumber x) = x
 
-    let tryCreate fieldName x =
-        ConstraintTypes.createInteger fieldName WholeNumber 0 Int32.MaxValue x
+    let tryCreate value =
+        if value < 0 then None else Some(WholeNumber value)
 
 [<AutoOpen>]
 module Alias =

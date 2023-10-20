@@ -41,8 +41,8 @@ module UserStorage =
                     |> Task.map (
                         Option.ofNull
                         >> Option.defaultValue 0
-                        >> WholeNumber.tryCreate "Total count"
-                        >> Result.defaultValue WholeNumber.defaultValue
+                        >> WholeNumber.tryCreate
+                        >> Option.defaultValue WholeNumber.defaultValue
                     )
 
                 return
