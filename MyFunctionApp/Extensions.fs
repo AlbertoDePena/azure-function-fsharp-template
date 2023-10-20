@@ -34,3 +34,27 @@ module String =
 
     let toQueryString (query: (string * string) list) =
         System.String.Join("&", query |> List.map (fun (key, value) -> $"{key}={value}"))
+
+[<AutoOpen>]
+module SqlDataReaderExtensions =
+    open System.Threading.Tasks
+    open Microsoft.Data.SqlClient
+
+    type SqlDataReader with
+        
+        /// Map all records with the provided function available in the result set
+        member this.ReadAllAsync<'T>(mapper: SqlDataReader -> 'T) : Task<'T seq> =
+            task {
+                let items = ResizeArray<'T>()
+
+                let mutable keepGoing = false
+                let! hasMoreItems = this.ReadAsync()
+                keepGoing <- hasMoreItems
+
+                while keepGoing do
+                    items.Add(mapper this)
+                    let! hasMoreItems = this.ReadAsync()
+                    keepGoing <- hasMoreItems
+
+                return items.ToArray() |> Seq.ofArray
+            }

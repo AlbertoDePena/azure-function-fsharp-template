@@ -18,7 +18,7 @@ module UserResponse =
         { Id = model.Id |> UniqueId.value
           EmailAddress = model.EmailAddress |> EmailAddress.value
           DisplayName = model.DisplayName |> Text.value
-          Type = model.Type.Value }
+          Type = model.Type |> UserType.value }
 
 [<NoComparison>]
 [<CLIMutable>]
@@ -39,7 +39,7 @@ module UserDetailsResponse =
             { Id = model.User.Id |> UniqueId.value
               EmailAddress = model.User.EmailAddress |> EmailAddress.value
               DisplayName = model.User.DisplayName |> Text.value
-              Type = model.User.Type.Value
-              Permissions = model.Permissions |> List.map (fun permission -> permission.Value) |> Seq.ofList
-              Groups = model.Groups |> List.map (fun group -> group.Value) |> Seq.ofList })
+              Type = model.User.Type |> UserType.value
+              Permissions = model.Permissions |> List.map UserPermission.value |> Seq.ofList
+              Groups = model.Groups |> List.map UserGroup.value |> Seq.ofList })
         |> Seq.ofList

@@ -3,42 +3,48 @@
 open MyFunctionApp.Invariants
 
 [<RequireQualifiedAccess>]
-type UserGroup =    
+type UserGroup =
     | Viewer
     | Editor
     | Administrator
 
-    member this.Value =
-        match this with
-        | Viewer -> "Viewer"
-        | Editor -> "Editor"
-        | Administrator -> "Administrator"
+[<RequireQualifiedAccess>]
+module UserGroup =
 
-    static member FromString (value: string) =
+    let value this =
+        match this with
+        | UserGroup.Viewer -> "Viewer"
+        | UserGroup.Editor -> "Editor"
+        | UserGroup.Administrator -> "Administrator"
+
+    let tryCreate (value: string) =
         match value with
-        | "Viewer" -> Some Viewer
-        | "Editor" -> Some Editor
-        | "Administrator" -> Some Administrator
+        | "Viewer" -> Some UserGroup.Viewer
+        | "Editor" -> Some UserGroup.Editor
+        | "Administrator" -> Some UserGroup.Administrator
         | _ -> None
 
 [<RequireQualifiedAccess>]
-type UserType =    
+type UserType =
     | Customer
     | Employee
 
-    member this.Value =
-        match this with
-        | Customer -> "Customer"
-        | Employee -> "Employee"
+[<RequireQualifiedAccess>]
+module UserType =
 
-    static member FromString (value: string) =
+    let value this =
+        match this with
+        | UserType.Customer -> "Customer"
+        | UserType.Employee -> "Employee"
+
+    let tryCreate (value: string) =
         match value with
-        | "Customer" -> Some Customer
-        | "Employee" -> Some Employee
+        | "Customer" -> Some UserType.Customer
+        | "Employee" -> Some UserType.Employee
         | _ -> None
 
 [<RequireQualifiedAccess>]
-type UserPermission =    
+type UserPermission =
     | ViewAirShipments
     | ViewGroundShipments
     | ViewOceanShipments
@@ -48,16 +54,22 @@ type UserPermission =
     | ViewInventory
     | ViewAnalytics
 
-    member this.Value =
+[<RequireQualifiedAccess>]
+module UserPermission =
+
+    let value this =
         match this with
-        | ViewAirShipments -> "View Air Shipments"
-        | ViewGroundShipments -> "View Ground Shipments"
-        | ViewOceanShipments -> "View Ocean Shipments"
-        | ViewFinancials -> "View Financials"
-        | ViewBookings -> "View Bookings"
-        | ExportSearchResults -> "Export Search Results"
-        | ViewInventory -> "View Inventory"
-        | ViewAnalytics -> "View Analytics"
+        | UserPermission.ViewAirShipments -> "View Air Shipments"
+        | UserPermission.ViewGroundShipments -> "View Ground Shipments"
+        | UserPermission.ViewOceanShipments -> "View Ocean Shipments"
+        | UserPermission.ViewFinancials -> "View Financials"
+        | UserPermission.ViewBookings -> "View Bookings"
+        | UserPermission.ExportSearchResults -> "Export Search Results"
+        | UserPermission.ViewInventory -> "View Inventory"
+        | UserPermission.ViewAnalytics -> "View Analytics"
+
+    let tryCreate (value: string) =
+        None
 
 type User =
     { Id: UniqueId
@@ -69,5 +81,3 @@ type UserDetails =
     { User: User
       Permissions: UserPermission list
       Groups: UserGroup list }
-
-
