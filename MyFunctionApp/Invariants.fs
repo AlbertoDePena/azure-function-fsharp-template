@@ -88,12 +88,3 @@ module WholeNumber =
 
     let tryCreate value =
         if value < 0 then None else Some(WholeNumber value)
-
-[<AutoOpen>]
-module Alias =
-
-    type DbConnectionString = Text
-
-    type DisplayName = Text
-
-    type UserName = Text

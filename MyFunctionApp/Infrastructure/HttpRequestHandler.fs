@@ -28,6 +28,8 @@ open MyFunctionApp.Invariants
 open MyFunctionApp.Extensions
 open MyFunctionApp.User.Domain
 
+type UserName = Text
+
 type HttpRequestHandler
     (
         logger: ILogger<HttpRequestHandler>,

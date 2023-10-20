@@ -14,6 +14,8 @@ open MyFunctionApp.User.Domain
 
 [<RequireQualifiedAccess>]
 module UserStorage =
+    
+    type DbConnectionString = Text
 
     /// <exception cref="DataStorageException"></exception>
     let getPagedData (dbConnectionString: DbConnectionString) (query: Query) : Task<PagedData<User>> =
