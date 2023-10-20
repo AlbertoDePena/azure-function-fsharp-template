@@ -103,11 +103,13 @@ module UserStorage =
 
                 let! hasNextResult = reader.NextResultAsync()
 
-                let! totalCount =
+                let totalCount =
                     if hasNextResult then
-                        reader.ReadFirstOrAsync(readTotalCount, WholeNumber.defaultValue)
+                        reader.GetInt32(0)
+                        |> WholeNumber.tryCreate
+                        |> Option.defaultValue WholeNumber.defaultValue
                     else
-                        Task.singleton WholeNumber.defaultValue
+                        WholeNumber.defaultValue
 
                 return
                     { Page = query.Page
