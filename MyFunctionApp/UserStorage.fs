@@ -17,11 +17,6 @@ module UserStorage =
 
     type DbConnectionString = Text
 
-    let private readTotalCount (reader: SqlDataReader) : WholeNumber =
-        reader.GetInt32(1)
-        |> WholeNumber.tryCreate
-        |> Option.defaultValue WholeNumber.defaultValue
-
     let private readUserGroup (reader: SqlDataReader) : UserGroup =
         reader.GetOrdinal("GroupName")
         |> reader.GetString
