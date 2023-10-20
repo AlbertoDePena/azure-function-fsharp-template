@@ -4,7 +4,6 @@ open System.Data
 open System.Threading.Tasks
 
 open Microsoft.Data.SqlClient
-open Dapper
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Exceptions
@@ -17,6 +16,11 @@ open MyFunctionApp.User.Domain
 module UserStorage =
 
     type DbConnectionString = Text
+
+    let private readTotalCount (reader: SqlDataReader) : WholeNumber =
+        reader.GetInt32(1)
+        |> WholeNumber.tryCreate
+        |> Option.defaultValue WholeNumber.defaultValue
 
     let private readUserGroup (reader: SqlDataReader) : UserGroup =
         reader.GetOrdinal("GroupName")
@@ -57,30 +61,53 @@ module UserStorage =
         task {
             try
                 use connection = new SqlConnection(Text.value dbConnectionString)
+                use command = new SqlCommand("dbo.Users_Search", connection)
 
-                let! gridReader =
-                    connection.QueryMultipleAsync(
-                        "dbo.Users_Search",
-                        param =
-                            {| SearchCriteria = query.SearchCriteria
-                               ActiveOnly = query.ActiveOnly
-                               Page = query.Page
-                               PageSize = query.PageSize
-                               SortBy = query.SortBy
-                               SortDirection = query.SortDirection |},
-                        commandType = CommandType.StoredProcedure
-                    )
+                command.CommandType <- CommandType.StoredProcedure
 
-                let! users = gridReader.ReadAsync<User>() |> Task.map Seq.toList
+                command.Parameters.AddWithValue(
+                    "@SearchCriteria",
+                    query.SearchCriteria
+                    |> Option.map Text.value
+                    |> Option.defaultValue String.defaultValue
+                )
+                |> ignore
+
+                command.Parameters.AddWithValue("@ActiveOnly", query.ActiveOnly) |> ignore
+
+                command.Parameters.AddWithValue("@Page", query.Page |> PositiveNumber.value)
+                |> ignore
+
+                command.Parameters.AddWithValue("@PageSize", query.PageSize |> PositiveNumber.value)
+                |> ignore
+
+                command.Parameters.AddWithValue(
+                    "@SortBy",
+                    query.SortBy |> Option.map Text.value |> Option.defaultValue String.defaultValue
+                )
+                |> ignore
+
+                command.Parameters.AddWithValue(
+                    "@SortDirection",
+                    query.SortDirection
+                    |> Option.map SortDirection.value
+                    |> Option.defaultValue String.defaultValue
+                )
+                |> ignore
+
+                do! connection.OpenAsync()
+
+                use! reader = command.ExecuteReaderAsync()
+
+                let! users = reader.ReadAllAsync readUser
+
+                let! hasNextResult = reader.NextResultAsync()
 
                 let! totalCount =
-                    gridReader.ReadFirstOrDefaultAsync<int>()
-                    |> Task.map (
-                        Option.ofNull
-                        >> Option.defaultValue 0
-                        >> WholeNumber.tryCreate
-                        >> Option.defaultValue WholeNumber.defaultValue
-                    )
+                    if hasNextResult then
+                        reader.ReadFirstOrAsync(readTotalCount, WholeNumber.defaultValue)
+                    else
+                        Task.singleton WholeNumber.defaultValue
 
                 return
                     { Page = query.Page
@@ -88,7 +115,7 @@ module UserStorage =
                       TotalCount = totalCount
                       SortBy = query.SortBy
                       SortDirection = query.SortDirection
-                      Data = users }
+                      Data = users |> Seq.toList }
             with ex ->
                 return (DataStorageException ex |> raise)
         }
@@ -104,6 +131,7 @@ module UserStorage =
                 use command = new SqlCommand("dbo.Users_FindByEmailAddress", connection)
 
                 command.CommandType <- CommandType.StoredProcedure
+
                 command.Parameters.AddWithValue("@EmailAddress", EmailAddress.value emailAddress)
                 |> ignore
 

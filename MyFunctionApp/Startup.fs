@@ -8,7 +8,6 @@ open Microsoft.Extensions.Options
 open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
-open MyFunctionApp.Infrastructure.Dapper
 open MyFunctionApp.Infrastructure.Telemetry
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
@@ -18,8 +17,6 @@ type Startup() =
 
     override this.Configure(builder: IFunctionsHostBuilder) =
         
-        Dapper.registerOptionType ()
-
         builder.Services
             .AddOptions<Database>()
             .Configure<IConfiguration>(fun settings configuration ->

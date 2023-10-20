@@ -8,15 +8,18 @@ type SortDirection =
     | Ascending
     | Descending
 
-    member this.Value =
-        match this with
-        | Ascending -> "Ascending"
-        | Descending -> "Descending"
+[<RequireQualifiedAccess>]
+module SortDirection =
 
-    static member FromString(value: string) =
+    let value this =
+        match this with
+        | SortDirection.Ascending -> "Ascending"
+        | SortDirection.Descending -> "Descending"
+
+    let tryCreate(value: string) =
         match value with
-        | "Ascending" -> Some Ascending
-        | "Descending" -> Some Descending
+        | "Ascending" -> Some SortDirection.Ascending
+        | "Descending" -> Some SortDirection.Descending
         | _ -> None
 
 type Query =
@@ -27,18 +30,18 @@ type Query =
       SortBy: Text option
       SortDirection: SortDirection option }
 
-type PagedData<'a> =
+type PagedData<'T> =
     { Page: PositiveNumber
       PageSize: PositiveNumber
       TotalCount: WholeNumber
       SortBy: Text option
       SortDirection: SortDirection option
-      Data: 'a list }
+      Data: 'T list }
 
 [<RequireQualifiedAccess>]
 module PagedData =
 
-    let calculateNumberOfPages (pagedData: PagedData<'a>) =
+    let calculateNumberOfPages (pagedData: PagedData<'T>) =
         let pageCount =
             WholeNumber.value pagedData.TotalCount / PositiveNumber.value pagedData.PageSize
 

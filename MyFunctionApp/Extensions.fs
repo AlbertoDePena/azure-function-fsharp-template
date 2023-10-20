@@ -41,7 +41,7 @@ module SqlDataReaderExtensions =
     open Microsoft.Data.SqlClient
 
     type SqlDataReader with
-        
+
         /// Map all records with the provided function available in the result set
         member this.ReadAllAsync<'T>(mapper: SqlDataReader -> 'T) : Task<'T seq> =
             task {
@@ -57,4 +57,14 @@ module SqlDataReaderExtensions =
                     keepGoing <- hasMoreItems
 
                 return items.ToArray() |> Seq.ofArray
+            }
+
+        /// Map the first record with the provided function available in the result set
+        member this.ReadFirstOrAsync<'T>(mapper: SqlDataReader -> 'T, defaultValue: 'T) : Task<'T> =
+            task {
+                let! hasMoreItems = this.ReadAsync()
+
+                let item = if hasMoreItems then mapper this else defaultValue
+
+                return item
             }

@@ -39,7 +39,7 @@ module PagedDataResponse =
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
-            |> Option.map (fun x -> x.Value)
+            |> Option.map SortDirection.value
             |> Option.defaultValue String.defaultValue
           Data = source.Data |> List.map mapping |> Array.ofList }
 
@@ -67,7 +67,7 @@ module QueryRequest =
                 |> PositiveNumber.tryCreate
                 |> Result.requireSome "Page size is required"
 
-            let sortDirection = query.SortDirection |> SortDirection.FromString
+            let sortDirection = query.SortDirection |> SortDirection.tryCreate
 
             return
                 { SearchCriteria = query.SearchCriteria |> Text.tryCreate

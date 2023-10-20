@@ -8,7 +8,7 @@
 		<WarningLevel>5</WarningLevel>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<ItemGroup>		
 		<Compile Include="Invariants.fs" />
 		<Compile Include="Exceptions.fs" />
 		<Compile Include="Extensions.fs" />
@@ -18,7 +18,6 @@
 		<Compile Include="UserDTOs.fs" />
 		<Compile Include="UserStorage.fs" />
 		<Compile Include="Infrastructure/Constants.fs" />
-		<Compile Include="Infrastructure\Dapper.fs" />
 		<Compile Include="Infrastructure\Options.fs" />
 		<Compile Include="Infrastructure/ObjectResults.fs" />
 		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
@@ -43,7 +42,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.0.123" />
 		<PackageReference Include="FsToolkit.ErrorHandling.TaskResult" Version="4.9.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
