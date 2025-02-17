@@ -15,10 +15,10 @@ type UserResponse =
 module UserResponse =
 
     let fromDomain (model: User) : UserResponse =
-        { Id = model.Id |> UniqueId.value
-          EmailAddress = model.EmailAddress |> EmailAddress.value
-          DisplayName = model.DisplayName |> Text.value
-          Type = model.Type |> UserType.value }
+        { Id = model.Id.Value
+          EmailAddress = model.EmailAddress.Value
+          DisplayName = model.DisplayName.Value
+          Type = model.Type |> (fun x -> x.ToString()) }
 
 [<NoComparison>]
 [<CLIMutable>]
@@ -36,10 +36,10 @@ module UserDetailsResponse =
     let fromDomain (models: UserDetails list) : UserDetailsResponse seq =
         models
         |> List.map (fun model ->
-            { Id = model.User.Id |> UniqueId.value
-              EmailAddress = model.User.EmailAddress |> EmailAddress.value
-              DisplayName = model.User.DisplayName |> Text.value
-              Type = model.User.Type |> UserType.value
-              Permissions = model.Permissions |> List.map UserPermission.value |> Seq.ofList
-              Groups = model.Groups |> List.map UserGroup.value |> Seq.ofList })
+            { Id = model.User.Id.Value
+              EmailAddress = model.User.EmailAddress.Value
+              DisplayName = model.User.DisplayName.Value
+              Type = model.User.Type |> (fun x -> x.ToString())
+              Permissions = model.Permissions |> List.map (fun x -> x.ToString()) |> Seq.ofList
+              Groups = model.Groups |> List.map (fun x -> x.ToString()) |> Seq.ofList })
         |> Seq.ofList

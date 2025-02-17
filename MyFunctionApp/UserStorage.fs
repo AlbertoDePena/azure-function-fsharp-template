@@ -20,42 +20,42 @@ module UserStorage =
     let private readUserGroup (reader: SqlDataReader) : UserGroup =
         reader.GetOrdinal("GroupName")
         |> reader.GetString
-        |> UserGroup.tryCreate
+        |> UserGroup.TryCreate
         |> Option.defaultWith (fun () -> failwith "Missing GroupName column")
 
     let private readUserPermission (reader: SqlDataReader) : UserPermission =
         reader.GetOrdinal("PermissionName")
         |> reader.GetString
-        |> UserPermission.tryCreate
+        |> UserPermission.TryCreate
         |> Option.defaultWith (fun () -> failwith "Missing PermissionName column")
 
     let private readUser (reader: SqlDataReader) : User =
         { Id =
             reader.GetOrdinal("Id")
             |> reader.GetGuid
-            |> UniqueId.tryCreate
+            |> UniqueId.TryCreate
             |> Option.defaultWith (fun () -> failwith "Missing Id column")
           EmailAddress =
             reader.GetOrdinal("EmailAddress")
             |> reader.GetString
-            |> EmailAddress.tryCreate
+            |> EmailAddress.TryCreate
             |> Option.defaultWith (fun () -> failwith "Missing EmailAddress column")
           DisplayName =
             reader.GetOrdinal("DisplayName")
             |> reader.GetString
-            |> Text.tryCreate
+            |> Text.TryCreate
             |> Option.defaultWith (fun () -> failwith "Missing DisplayName column")
           Type =
             reader.GetOrdinal("Type")
             |> reader.GetString
-            |> UserType.tryCreate
+            |> UserType.TryCreate
             |> Option.defaultWith (fun () -> failwith "Missing Type column") }
 
     /// <exception cref="DataStorageException"></exception>
     let getPagedData (dbConnectionString: DbConnectionString) (query: Query) : Task<PagedData<User>> =
         task {
             try
-                use connection = new SqlConnection(Text.value dbConnectionString)
+                use connection = new SqlConnection(dbConnectionString.Value)
                 use command = new SqlCommand("dbo.Users_Search", connection)
 
                 command.CommandType <- CommandType.StoredProcedure
@@ -63,29 +63,29 @@ module UserStorage =
                 command.Parameters.AddWithValue(
                     "@SearchCriteria",
                     query.SearchCriteria
-                    |> Option.map Text.value
+                    |> Option.map (fun x -> x.Value)
                     |> Option.defaultValue String.defaultValue
                 )
                 |> ignore
 
                 command.Parameters.AddWithValue("@ActiveOnly", query.ActiveOnly) |> ignore
 
-                command.Parameters.AddWithValue("@Page", query.Page |> PositiveNumber.value)
-                |> ignore
+                command.Parameters.AddWithValue("@Page", query.Page) |> ignore
 
-                command.Parameters.AddWithValue("@PageSize", query.PageSize |> PositiveNumber.value)
-                |> ignore
+                command.Parameters.AddWithValue("@PageSize", query.PageSize) |> ignore
 
                 command.Parameters.AddWithValue(
                     "@SortBy",
-                    query.SortBy |> Option.map Text.value |> Option.defaultValue String.defaultValue
+                    query.SortBy
+                    |> Option.map (fun x -> x.Value)
+                    |> Option.defaultValue String.defaultValue
                 )
                 |> ignore
 
                 command.Parameters.AddWithValue(
                     "@SortDirection",
                     query.SortDirection
-                    |> Option.map SortDirection.value
+                    |> Option.map (fun x -> x.ToString())
                     |> Option.defaultValue String.defaultValue
                 )
                 |> ignore
@@ -98,13 +98,7 @@ module UserStorage =
 
                 let! hasNextResult = reader.NextResultAsync()
 
-                let totalCount =
-                    if hasNextResult then
-                        reader.GetInt32(0)
-                        |> WholeNumber.tryCreate
-                        |> Option.defaultValue WholeNumber.defaultValue
-                    else
-                        WholeNumber.defaultValue
+                let totalCount = if hasNextResult then reader.GetInt32(0) else 0
 
                 return
                     { Page = query.Page
@@ -124,13 +118,12 @@ module UserStorage =
         : Task<UserDetails option> =
         task {
             try
-                use connection = new SqlConnection(Text.value dbConnectionString)
+                use connection = new SqlConnection(dbConnectionString.Value)
                 use command = new SqlCommand("dbo.Users_FindByEmailAddress", connection)
 
                 command.CommandType <- CommandType.StoredProcedure
 
-                command.Parameters.AddWithValue("@EmailAddress", EmailAddress.value emailAddress)
-                |> ignore
+                command.Parameters.AddWithValue("@EmailAddress", emailAddress.Value) |> ignore
 
                 do! connection.OpenAsync()
 

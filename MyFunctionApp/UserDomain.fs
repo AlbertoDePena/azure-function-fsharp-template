@@ -8,16 +8,13 @@ type UserGroup =
     | Editor
     | Administrator
 
-[<RequireQualifiedAccess>]
-module UserGroup =
-
-    let value this =
+    override this.ToString() =
         match this with
         | UserGroup.Viewer -> "Viewer"
         | UserGroup.Editor -> "Editor"
         | UserGroup.Administrator -> "Administrator"
 
-    let tryCreate (value: string) =
+    static member TryCreate(value: string) =
         match value with
         | "Viewer" -> Some UserGroup.Viewer
         | "Editor" -> Some UserGroup.Editor
@@ -29,15 +26,12 @@ type UserType =
     | Customer
     | Employee
 
-[<RequireQualifiedAccess>]
-module UserType =
-
-    let value this =
+    override this.ToString() =
         match this with
         | UserType.Customer -> "Customer"
         | UserType.Employee -> "Employee"
 
-    let tryCreate (value: string) =
+    static member TryCreate(value: string) =
         match value with
         | "Customer" -> Some UserType.Customer
         | "Employee" -> Some UserType.Employee
@@ -54,10 +48,7 @@ type UserPermission =
     | ViewInventory
     | ViewAnalytics
 
-[<RequireQualifiedAccess>]
-module UserPermission =
-
-    let value this =
+    override this.ToString() =
         match this with
         | UserPermission.ViewAirShipments -> "View Air Shipments"
         | UserPermission.ViewGroundShipments -> "View Ground Shipments"
@@ -68,7 +59,7 @@ module UserPermission =
         | UserPermission.ViewInventory -> "View Inventory"
         | UserPermission.ViewAnalytics -> "View Analytics"
 
-    let tryCreate (value: string) =
+    static member TryCreate(value: string) =
         None
 
 type User =

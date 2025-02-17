@@ -29,17 +29,26 @@ module PagedDataResponse =
     open MyFunctionApp.Domain
 
     let fromDomain mapping (source: PagedData<'a>) : PagedDataResponse<'b> =
-        { PageSize = PositiveNumber.value source.PageSize
-          Page = PositiveNumber.value source.Page
-          TotalCount = WholeNumber.value source.TotalCount
-          NumberOfPages = source |> PagedData.calculateNumberOfPages |> WholeNumber.value
+
+        let pageCount = source.TotalCount / source.PageSize
+
+        let numberOfPages =
+            if (source.TotalCount % source.PageSize) = 0 then
+                pageCount
+            else
+                pageCount + 1
+
+        { PageSize = source.PageSize
+          Page = source.Page
+          TotalCount = source.TotalCount
+          NumberOfPages = numberOfPages
           SortBy =
             source.SortBy
-            |> Option.map Text.value
+            |> Option.map (fun x -> x.Value)
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
-            |> Option.map SortDirection.value
+            |> Option.map (fun x -> x.ToString())
             |> Option.defaultValue String.defaultValue
           Data = source.Data |> List.map mapping |> Array.ofList }
 
@@ -60,20 +69,15 @@ module QueryRequest =
 
     let toDomain (query: QueryRequest) : Validation<Query, string> =
         validation {
-            let! page = query.Page |> PositiveNumber.tryCreate |> Result.requireSome "Page is required"
+            let! _ = query.Page > 0 |> Result.requireTrue "Page is required"
 
-            and! pageSize =
-                query.PageSize
-                |> PositiveNumber.tryCreate
-                |> Result.requireSome "Page size is required"
-
-            let sortDirection = query.SortDirection |> SortDirection.tryCreate
+            and! _ = query.PageSize > 0 |> Result.requireTrue "Page size is required"
 
             return
-                { SearchCriteria = query.SearchCriteria |> Text.tryCreate
+                { SearchCriteria = query.SearchCriteria |> Text.TryCreate
                   ActiveOnly = query.ActiveOnly
-                  Page = page
-                  PageSize = pageSize
-                  SortBy = query.SortBy |> Text.tryCreate
-                  SortDirection = sortDirection }
+                  Page = query.Page
+                  PageSize = query.PageSize
+                  SortBy = query.SortBy |> Text.TryCreate
+                  SortDirection = query.SortDirection |> SortDirection.TryCreate }
         }

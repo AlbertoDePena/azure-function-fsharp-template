@@ -2,89 +2,60 @@ namespace MyFunctionApp.Invariants
 
 open System
 
-type EmailAddress = private EmailAddress of string
+type EmailAddress =
+    private
+    | EmailAddress of string
 
-[<RequireQualifiedAccess>]
-module EmailAddress =
+    member this.Value =
+        let (EmailAddress value) = this
+        value
 
-    let value (EmailAddress x) = x
+    override this.ToString() = this.Value
 
-    let tryCreate (value: string) =
-        if isNull value then
+    static member TryCreate(value: string) =
+        if String.IsNullOrWhiteSpace value then
             None
-        elif
-            System.Text.RegularExpressions.Regex.IsMatch(value, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")
-            |> not
-        then
-            None
+        elif Text.RegularExpressions.Regex.IsMatch(value, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$") then
+            Some(EmailAddress(value.ToLower()))
         else
-            let emailAddress = value.ToLower()
-            Some(EmailAddress emailAddress)
+            None
 
-type PositiveNumber = private PositiveNumber of int
+type UniqueId = 
+    private 
+    | UniqueId of Guid
 
-[<RequireQualifiedAccess>]
-module PositiveNumber =
+    member this.Value =
+        let (UniqueId value) = this
+        value
 
-    let defaultValue = PositiveNumber 1
-
-    let value (PositiveNumber x) = x
-
-    let tryCreate value =
-        if value < 1 then None else Some(PositiveNumber value)
-
-type Text = private Text of string
-
-[<RequireQualifiedAccess>]
-module Text =
-    
-    /// <summary>Text's default value is the empty string</summary>
-    let defaultValue = Text String.Empty
-
-    /// <summary>Unwrap the primitive string from Text</summary>
-    let value (Text x) = x
-
-    /// <summary>Return the primitive string when Some string otherwise return null when None</summary>
-    let valueOrNull (text: Text option) =
-        text |> Option.map value |> Option.defaultValue null
-
-    /// <summary>Try to convert a potentially null string to Text</summary>
-    let tryCreate (value: string) =
-        if isNull value then None else Some(Text value)
-
-    /// <summary>Convert a potentially null string to Text</summary>
-    /// <exception cref="System.Exception">Throw exception when the string is null</exception>
-    let tryCreateOrThrow exceptionMessage value =
-        value |> tryCreate |> Option.defaultWith (fun () -> failwith exceptionMessage)
-
-    /// <summary>Apply the function to the Text</summary>
-    /// <exception cref="System.Exception">Throw exception when the transformed string is null</exception>
-    let transform (transformer: string -> string) (Text value) =
-        match transformer value with
-        | null -> failwith "The transformed string cannot be null"
-        | transformed -> Text transformed
-
-type UniqueId = private UniqueId of Guid
-
-[<RequireQualifiedAccess>]
-module UniqueId =
-
-    let value (UniqueId x) = x
-
-    let tryCreate (value: Guid) =
+    override this.ToString() = this.Value |> fun x -> x.ToString()
+        
+    static member TryCreate (value: Guid) =
         if value = Guid.Empty then None else Some(UniqueId value)
 
-    let create () =
+    static member CreateSql () =
         RT.Comb.Provider.Sql.Create() |> UniqueId
+    
+type Text =
+    private
+    | Text of string
 
-type WholeNumber = private WholeNumber of int
+    member this.Value =
+        let (Text value) = this
+        value
 
-[<RequireQualifiedAccess>]
-module WholeNumber =
+    override this.ToString() = this.Value
 
-    let defaultValue = WholeNumber 0
+    static member TryCreate(value: string) =
+        if String.IsNullOrWhiteSpace value then
+            None
+        else
+            Some(Text value)
 
-    let value (WholeNumber x) = x
-
-    let tryCreate value =
-        if value < 0 then None else Some(WholeNumber value)
+[<AutoOpen>]
+module Alias =
+    
+    type BigNumber = Int64
+    type Money = Decimal
+    type Number = Int32    
+    type Timestamp = DateTimeOffset

@@ -46,13 +46,12 @@ type SearchUsers
             task {
                 let dbConnectionString =
                     databaseOptions.Value.ConnectionString
-                    |> Text.tryCreate
-                    |> Option.defaultWith (fun () -> failwith "Database connection string is requried")
+                    |> Text.TryCreate
+                    |> Option.defaultWith (fun () -> failwith "The database connection string is required")
 
                 let emailAddress =
-                    userName
-                    |> Text.value
-                    |> EmailAddress.tryCreate
+                    userName.Value
+                    |> EmailAddress.TryCreate
                     |> Option.defaultWith (fun () -> failwith "The user name is not a proper email address")
 
                 let queryValidation =

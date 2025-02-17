@@ -84,8 +84,7 @@ type HttpRequestHandler
         /// <exception cref="AuthenticationException"></exception>
         let getUserName (claimsPrincipal: ClaimsPrincipal) : UserName =
             claimsPrincipal.TryGetClaimValue ClaimType.EmailAddress
-            |> Option.defaultValue String.defaultValue
-            |> Text.tryCreate
+            |> Option.bind Text.TryCreate
             |> Option.defaultWith (fun () ->
                 AuthenticationException "Email address not found in the claims principal"
                 |> raise)
@@ -117,7 +116,7 @@ type HttpRequestHandler
 
                 httpRequest.HttpContext.User <- claimsPrincipal
 
-                telemetryClient.Context.User.AuthenticatedUserId <- (Text.value userName)
+                telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
 
                 checkAuthorization claimsPrincipal userGroups
 
@@ -126,26 +125,22 @@ type HttpRequestHandler
                 return actionResult
             with
             | :? AuthenticationException as ex ->
-                if logger.IsEnabled LogLevel.Debug then
-                    logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
+                logger.LogDebug(LogEvent.AuthenticationError, ex, ex.Message)
 
                 return UnauthorizedResult() :> IActionResult
 
             | :? AuthorizationException as ex ->
-                if logger.IsEnabled LogLevel.Debug then
-                    logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
+                logger.LogDebug(LogEvent.AuthorizationError, ex, ex.Message)
 
                 return ForbidResult() :> IActionResult
 
             | :? DataStorageException as ex ->
-                if logger.IsEnabled LogLevel.Error then
-                    logger.LogError(LogEvent.DataStorageError, ex, ex.Message)
+                logger.LogError(LogEvent.DataStorageError, ex, ex.Message)
 
                 return InternalServerErrorResult() :> IActionResult
 
             | ex ->
-                if logger.IsEnabled LogLevel.Error then
-                    logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
+                logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
 
                 return InternalServerErrorResult() :> IActionResult
         }
