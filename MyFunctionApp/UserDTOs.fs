@@ -42,5 +42,5 @@ module UserDetailsResponse =
               DisplayName = model.User.DisplayName.Value
               Type = model.User.Type |> Type.toString
               Permissions = model.Permissions |> List.map Type.toString |> Seq.ofList
-              Groups = model.Groups |> List.map Type.toString |> Seq.ofList })
+              Groups = model.Roles |> List.map Type.toString |> Seq.ofList })
         |> Seq.ofList

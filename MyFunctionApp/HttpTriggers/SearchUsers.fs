@@ -42,7 +42,7 @@ type SearchUsers
             HttpRequest)
         =
 
-        httpRequestHandler.HandleAsync httpRequest [ UserGroup.Viewer ] (fun userName ->
+        httpRequestHandler.HandleAsync httpRequest [ UserRole.Viewer ] (fun userName ->
             task {
                 let dbConnectionString =
                     databaseOptions.Value.ConnectionString

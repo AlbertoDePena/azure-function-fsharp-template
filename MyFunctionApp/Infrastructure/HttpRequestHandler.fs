@@ -40,7 +40,7 @@ type HttpRequestHandler
 
     member this.HandleAsync
         (httpRequest: HttpRequest)
-        (userGroups: UserGroup list)
+        (roles: UserRole list)
         (getActionResultAsync: UserName -> Task<IActionResult>)
         =
 
@@ -90,20 +90,20 @@ type HttpRequestHandler
                 |> raise)
 
         /// <exception cref="AuthorizationException"></exception>
-        let checkAuthorization (claimsPrincipal: ClaimsPrincipal) (userGroups: UserGroup list) =
-            let claimValues =
-                userGroups
-                |> List.map (fun userGroup ->
-                    match userGroup with
-                    | UserGroup.Viewer -> ClaimValue.Viewer
-                    | UserGroup.Editor -> ClaimValue.Editor
-                    | UserGroup.Administrator -> ClaimValue.Administrator)
+        let checkAuthorization (claimsPrincipal: ClaimsPrincipal) (roles: UserRole list) =
+            let roleClaimValues =
+                roles
+                |> List.map (fun role ->
+                    match role with
+                    | UserRole.Viewer -> RoleClaimValue.Viewer
+                    | UserRole.Editor -> RoleClaimValue.Editor
+                    | UserRole.Administrator -> RoleClaimValue.Administrator)
 
             claimsPrincipal.FindAll(fun claim -> claim.Type = ClaimType.Role)
             |> Seq.ofNull
-            |> Seq.exists (fun claim -> claimValues |> List.contains claim.Value)
-            |> fun isAuthorized ->
-                if not isAuthorized then
+            |> Seq.exists (fun claim -> roleClaimValues |> List.contains claim.Value)
+            |> fun isMember ->
+                if not isMember then
                     "The user is not authorized to access the requested resource"
                     |> AuthorizationException
                     |> raise
@@ -118,7 +118,7 @@ type HttpRequestHandler
 
                 telemetryClient.Context.User.AuthenticatedUserId <- userName.Value
 
-                checkAuthorization claimsPrincipal userGroups
+                checkAuthorization claimsPrincipal roles
 
                 let! actionResult = getActionResultAsync userName
 

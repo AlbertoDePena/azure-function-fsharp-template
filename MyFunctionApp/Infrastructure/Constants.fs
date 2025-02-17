@@ -14,7 +14,7 @@ module ClaimType =
     let Groups = "groups"
 
 [<RequireQualifiedAccess>]
-module ClaimValue =
+module RoleClaimValue =
 
     [<Literal>]
     let Administrator = "Administrator"

@@ -3,22 +3,22 @@
 open MyFunctionApp.Invariants
 
 [<RequireQualifiedAccess>]
-type UserGroup =
+type UserRole =
     | Viewer
     | Editor
     | Administrator
 
     override this.ToString() =
         match this with
-        | UserGroup.Viewer -> "Viewer"
-        | UserGroup.Editor -> "Editor"
-        | UserGroup.Administrator -> "Administrator"
+        | UserRole.Viewer -> "Viewer"
+        | UserRole.Editor -> "Editor"
+        | UserRole.Administrator -> "Administrator"
 
     static member TryCreate(value: string) =
         match value with
-        | "Viewer" -> Some UserGroup.Viewer
-        | "Editor" -> Some UserGroup.Editor
-        | "Administrator" -> Some UserGroup.Administrator
+        | "Viewer" -> Some UserRole.Viewer
+        | "Editor" -> Some UserRole.Editor
+        | "Administrator" -> Some UserRole.Administrator
         | _ -> None
 
 [<RequireQualifiedAccess>]
@@ -39,28 +39,22 @@ type UserType =
 
 [<RequireQualifiedAccess>]
 type UserPermission =
-    | ViewAirShipments
-    | ViewGroundShipments
-    | ViewOceanShipments
+    | ViewShipments
     | ViewFinancials
-    | ViewBookings
     | ExportSearchResults
-    | ViewInventory
-    | ViewAnalytics
 
     override this.ToString() =
         match this with
-        | UserPermission.ViewAirShipments -> "View Air Shipments"
-        | UserPermission.ViewGroundShipments -> "View Ground Shipments"
-        | UserPermission.ViewOceanShipments -> "View Ocean Shipments"
+        | UserPermission.ViewShipments -> "View Shipments"
         | UserPermission.ViewFinancials -> "View Financials"
-        | UserPermission.ViewBookings -> "View Bookings"
         | UserPermission.ExportSearchResults -> "Export Search Results"
-        | UserPermission.ViewInventory -> "View Inventory"
-        | UserPermission.ViewAnalytics -> "View Analytics"
 
     static member TryCreate(value: string) =
-        None
+        match value with
+        | "View Shipments" -> Some UserPermission.ViewShipments
+        | "View Financials" -> Some UserPermission.ViewFinancials
+        | "Export Search Results" -> Some UserPermission.ExportSearchResults
+        | _ -> None
 
 type User =
     { Id: UniqueId
@@ -71,4 +65,4 @@ type User =
 type UserDetails =
     { User: User
       Permissions: UserPermission list
-      Groups: UserGroup list }
+      Roles: UserRole list }

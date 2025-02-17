@@ -17,11 +17,11 @@ module UserStorage =
 
     type DbConnectionString = Text
 
-    let private readUserGroup (reader: SqlDataReader) : UserGroup =
-        reader.GetOrdinal("GroupName")
+    let private readUserRole (reader: SqlDataReader) : UserRole =
+        reader.GetOrdinal("RoleName")
         |> reader.GetString
-        |> UserGroup.TryCreate
-        |> Option.defaultWith (fun () -> failwith "Missing GroupName column")
+        |> UserRole.TryCreate
+        |> Option.defaultWith (fun () -> failwith "Missing RoleName column")
 
     let private readUserPermission (reader: SqlDataReader) : UserPermission =
         reader.GetOrdinal("PermissionName")
@@ -141,9 +141,9 @@ module UserStorage =
 
                 let! hasNextResult = reader.NextResultAsync()
 
-                let! userGroups =
+                let! userRoles =
                     if hasNextResult then
-                        reader.ReadAllAsync readUserGroup
+                        reader.ReadAllAsync readUserRole
                     else
                         Task.singleton []
 
@@ -153,7 +153,7 @@ module UserStorage =
                     |> Option.map (fun user ->
                         { User = user
                           Permissions = userPermissions |> Seq.toList
-                          Groups = userGroups |> Seq.toList })
+                          Roles = userRoles |> Seq.toList })
 
                 return userDetailsOption
             with ex ->
