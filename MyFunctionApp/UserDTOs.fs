@@ -3,6 +3,7 @@
 open System
 open MyFunctionApp.Invariants
 open MyFunctionApp.User.Domain
+open MyFunctionApp.Extensions
 
 [<CLIMutable>]
 type UserResponse =
@@ -18,7 +19,7 @@ module UserResponse =
         { Id = model.Id.Value
           EmailAddress = model.EmailAddress.Value
           DisplayName = model.DisplayName.Value
-          Type = model.Type |> (fun x -> x.ToString()) }
+          Type = model.Type |> Type.toString }
 
 [<NoComparison>]
 [<CLIMutable>]
@@ -39,7 +40,7 @@ module UserDetailsResponse =
             { Id = model.User.Id.Value
               EmailAddress = model.User.EmailAddress.Value
               DisplayName = model.User.DisplayName.Value
-              Type = model.User.Type |> (fun x -> x.ToString())
-              Permissions = model.Permissions |> List.map (fun x -> x.ToString()) |> Seq.ofList
-              Groups = model.Groups |> List.map (fun x -> x.ToString()) |> Seq.ofList })
+              Type = model.User.Type |> Type.toString
+              Permissions = model.Permissions |> List.map Type.toString |> Seq.ofList
+              Groups = model.Groups |> List.map Type.toString |> Seq.ofList })
         |> Seq.ofList

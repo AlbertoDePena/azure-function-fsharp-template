@@ -35,6 +35,11 @@ module String =
     let toQueryString (query: (string * string) list) =
         System.String.Join("&", query |> List.map (fun (key, value) -> $"{key}={value}"))
 
+[<RequireQualifiedAccess>]
+module Type =
+
+    let inline toString<'a when 'a: (member ToString: unit -> string)> (value: 'a) = value.ToString()
+
 [<AutoOpen>]
 module SqlDataReaderExtensions =
     open System.Threading.Tasks

@@ -48,7 +48,7 @@ module PagedDataResponse =
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
-            |> Option.map (fun x -> x.ToString())
+            |> Option.map Type.toString
             |> Option.defaultValue String.defaultValue
           Data = source.Data |> List.map mapping |> Array.ofList }
 

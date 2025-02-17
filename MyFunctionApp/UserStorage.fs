@@ -85,7 +85,7 @@ module UserStorage =
                 command.Parameters.AddWithValue(
                     "@SortDirection",
                     query.SortDirection
-                    |> Option.map (fun x -> x.ToString())
+                    |> Option.map Type.toString
                     |> Option.defaultValue String.defaultValue
                 )
                 |> ignore
