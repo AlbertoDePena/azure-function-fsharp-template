@@ -17,7 +17,7 @@ open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Infrastructure.Extensions
-open MyFunctionApp.Infrastructure.HttpRequestHandler
+open MyFunctionApp.HttpTriggers.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
 
 open MyFunctionApp.Infrastructure.Extensions

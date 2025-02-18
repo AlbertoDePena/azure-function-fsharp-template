@@ -1,4 +1,4 @@
-namespace MyFunctionApp.Infrastructure.HttpRequestHandler
+namespace MyFunctionApp.HttpTriggers.HttpRequestHandler
 
 open System
 open System.Security.Claims
@@ -25,7 +25,6 @@ open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Constants
 open MyFunctionApp.Domain
-open MyFunctionApp.Infrastructure.Extensions
 
 type UserName = Text
 

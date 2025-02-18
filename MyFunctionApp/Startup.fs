@@ -9,7 +9,7 @@ open Microsoft.IdentityModel.Protocols
 open Microsoft.IdentityModel.Protocols.OpenIdConnect
 
 open MyFunctionApp.Infrastructure.Telemetry
-open MyFunctionApp.Infrastructure.HttpRequestHandler
+open MyFunctionApp.HttpTriggers.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
 
 type Startup() =

@@ -15,14 +15,12 @@
 		<Compile Include="Infrastructure\Exceptions.fs" />
 		<Compile Include="Infrastructure\Extensions.fs" />
 		<Compile Include="Infrastructure\Options.fs" />
-		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
-		<Compile Include="Infrastructure/HttpRequestExtensions.fs" />
-		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
 		<Compile Include="Infrastructure\UserDatabase.fs" />
 		<Compile Include="Infrastructure/Telemetry.fs" />
 		<Compile Include="HttpTriggers\SharedDTOs.fs" />
 		<Compile Include="HttpTriggers\UserDTOs.fs" />
 		<Compile Include="HttpTriggers\ObjectResults.fs" />
+		<Compile Include="HttpTriggers\HttpRequestHandler.fs" />
 		<Compile Include="HttpTriggers\SearchUsers.fs" />
 		<Compile Include="Startup.fs" />
 	</ItemGroup>
