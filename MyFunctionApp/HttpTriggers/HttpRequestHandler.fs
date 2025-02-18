@@ -3,7 +3,6 @@ namespace MyFunctionApp.HttpTriggers.HttpRequestHandler
 open System
 open System.Security.Claims
 open System.Threading.Tasks
-open System.Web.Http
 
 open System.IdentityModel.Tokens.Jwt
 open System.Threading
@@ -135,10 +134,10 @@ type HttpRequestHandler
             | :? DataStorageException as ex ->
                 logger.LogError(LogEvent.DataStorageError, ex, ex.Message)
 
-                return InternalServerErrorResult() :> IActionResult
+                return StatusCodeResult(StatusCodes.Status500InternalServerError) :> IActionResult
 
             | ex ->
                 logger.LogError(LogEvent.InternalServerError, ex, ex.Message)
 
-                return InternalServerErrorResult() :> IActionResult
+                return StatusCodeResult(StatusCodes.Status500InternalServerError) :> IActionResult
         }

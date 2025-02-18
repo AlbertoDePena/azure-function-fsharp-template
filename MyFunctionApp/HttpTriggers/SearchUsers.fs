@@ -2,11 +2,8 @@
 
 open System
 open System.Data
-open System.Web.Http
 open System.Threading.Tasks
 
-open Microsoft.Azure.WebJobs
-open Microsoft.Azure.WebJobs.Extensions.Http
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Mvc
@@ -24,6 +21,7 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Domain
 open MyFunctionApp.Infrastructure.Database
 open MyFunctionApp.HttpTriggers.DTOs
+open Microsoft.Azure.Functions.Worker
 
 type SearchUsers
     (
@@ -33,7 +31,7 @@ type SearchUsers
         userDatabase: UserDatabase
     ) =
 
-    [<FunctionName(nameof SearchUsers)>]
+    [<Function(nameof SearchUsers)>]
     member this.Run
         ([<HttpTrigger(AuthorizationLevel.Anonymous, HttpMethod.Get, Route = "v1/Users/Search")>] httpRequest:
             HttpRequest)
