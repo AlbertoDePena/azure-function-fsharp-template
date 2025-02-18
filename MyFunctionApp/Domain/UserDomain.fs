@@ -1,6 +1,4 @@
-﻿namespace MyFunctionApp.User.Domain
-
-open MyFunctionApp.Invariants
+﻿namespace MyFunctionApp.Domain
 
 [<RequireQualifiedAccess>]
 type UserRole =

@@ -1,4 +1,4 @@
-﻿namespace MyFunctionApp.Shared.DTOs
+﻿namespace MyFunctionApp.HttpTriggers.DTOs
 
 [<CLIMutable>]
 type ApiMessageResponse = { Messages: string array }
@@ -24,7 +24,7 @@ type PagedDataResponse<'a> =
 [<RequireQualifiedAccess>]
 module PagedDataResponse =
     open FsToolkit.ErrorHandling
-    open MyFunctionApp.Extensions    
+    open MyFunctionApp.Infrastructure.Extensions    
     open MyFunctionApp.Domain
 
     let fromDomain mapping (source: PagedData<'a>) : PagedDataResponse<'b> =
@@ -63,7 +63,6 @@ type QueryRequest =
 [<RequireQualifiedAccess>]
 module QueryRequest =
     open FsToolkit.ErrorHandling
-    open MyFunctionApp.Invariants
     open MyFunctionApp.Domain
 
     let toDomain (query: QueryRequest) : Validation<Query, string> =

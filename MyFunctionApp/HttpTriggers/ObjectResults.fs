@@ -1,4 +1,4 @@
-namespace MyFunctionApp.Infrastructure.ObjectResults
+namespace MyFunctionApp.HttpTriggers.ObjectResults
 
 open System
 open Microsoft.AspNetCore.Mvc

@@ -20,13 +20,10 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
 
-open MyFunctionApp.Invariants
-open MyFunctionApp.Extensions
+open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Domain
-open MyFunctionApp.User.Domain
-open MyFunctionApp.User.Storage
-open MyFunctionApp.Shared.DTOs
-open MyFunctionApp.User.DTOs
+open MyFunctionApp.Infrastructure.Database
+open MyFunctionApp.HttpTriggers.DTOs
 
 type SearchUsers
     (

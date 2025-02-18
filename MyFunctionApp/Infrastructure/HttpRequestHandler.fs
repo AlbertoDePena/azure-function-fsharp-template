@@ -21,12 +21,11 @@ open Microsoft.Extensions.Options
 open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Options
-open MyFunctionApp.Exceptions
+open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Infrastructure.Constants
-open MyFunctionApp.Invariants
-open MyFunctionApp.Extensions
-open MyFunctionApp.User.Domain
+open MyFunctionApp.Domain
+open MyFunctionApp.Infrastructure.Extensions
 
 type UserName = Text
 

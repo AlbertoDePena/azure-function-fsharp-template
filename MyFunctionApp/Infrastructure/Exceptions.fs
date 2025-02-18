@@ -1,4 +1,4 @@
-﻿namespace MyFunctionApp.Exceptions
+﻿namespace MyFunctionApp.Infrastructure.Exceptions
 
 open System
 

@@ -1,7 +1,7 @@
-﻿namespace MyFunctionApp.User.DTOs
+﻿namespace MyFunctionApp.HttpTriggers.DTOs
 
 open System
-open MyFunctionApp.User.Domain
+open MyFunctionApp.Domain
 
 [<CLIMutable>]
 type UserResponse =

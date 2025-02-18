@@ -1,4 +1,4 @@
-﻿namespace MyFunctionApp.User.Storage
+﻿namespace MyFunctionApp.Infrastructure.Database
 
 open System.Data
 open System.Threading.Tasks
@@ -6,11 +6,9 @@ open System.Threading.Tasks
 open Microsoft.Data.SqlClient
 open FsToolkit.ErrorHandling
 
-open MyFunctionApp.Exceptions
-open MyFunctionApp.Extensions
-open MyFunctionApp.Invariants
+open MyFunctionApp.Infrastructure.Exceptions
+open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Domain
-open MyFunctionApp.User.Domain
 
 [<RequireQualifiedAccess>]
 module UserStorage =

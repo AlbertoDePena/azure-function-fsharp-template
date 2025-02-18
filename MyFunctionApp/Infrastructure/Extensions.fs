@@ -1,4 +1,4 @@
-namespace MyFunctionApp.Extensions
+namespace MyFunctionApp.Infrastructure.Extensions
 
 [<RequireQualifiedAccess>]
 module Array =
