@@ -80,7 +80,7 @@ type SearchUsers
                     return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
                 | Ok query ->
-                    let! pagedData = UserStorage.getPagedData dbConnectionString query
+                    let! pagedData = UserDatabase.getPagedData dbConnectionString query
 
                     let guid = Guid.NewGuid()
                     let correlationId = guid.ToString()

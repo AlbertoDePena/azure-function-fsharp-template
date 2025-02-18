@@ -11,7 +11,7 @@ open MyFunctionApp.Infrastructure.Extensions
 open MyFunctionApp.Domain
 
 [<RequireQualifiedAccess>]
-module UserStorage =
+module UserDatabase =
 
     type DbConnectionString = Text
 

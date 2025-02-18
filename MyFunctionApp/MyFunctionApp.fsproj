@@ -18,7 +18,7 @@
 		<Compile Include="Infrastructure/ClaimsPrincipalExtensions.fs" />
 		<Compile Include="Infrastructure/HttpRequestExtensions.fs" />
 		<Compile Include="Infrastructure/HttpRequestHandler.fs" />
-		<Compile Include="Infrastructure\UserStorage.fs" />
+		<Compile Include="Infrastructure\UserDatabase.fs" />
 		<Compile Include="Infrastructure/Telemetry.fs" />
 		<Compile Include="HttpTriggers\SharedDTOs.fs" />
 		<Compile Include="HttpTriggers\UserDTOs.fs" />
