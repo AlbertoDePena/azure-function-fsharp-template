@@ -8,11 +8,13 @@ type UserRole =
     | Editor
     | Administrator
 
-    override this.ToString() =
+    member this.Value =
         match this with
         | UserRole.Viewer -> "Viewer"
         | UserRole.Editor -> "Editor"
         | UserRole.Administrator -> "Administrator"
+
+    override this.ToString() = this.Value
 
     static member TryCreate(value: string) =
         match value with
@@ -26,10 +28,12 @@ type UserType =
     | Customer
     | Employee
 
-    override this.ToString() =
+    member this.Value =
         match this with
         | UserType.Customer -> "Customer"
         | UserType.Employee -> "Employee"
+
+    override this.ToString() = this.Value
 
     static member TryCreate(value: string) =
         match value with
@@ -43,11 +47,13 @@ type UserPermission =
     | ViewFinancials
     | ExportSearchResults
 
-    override this.ToString() =
+    member this.Value =
         match this with
         | UserPermission.ViewShipments -> "View Shipments"
         | UserPermission.ViewFinancials -> "View Financials"
         | UserPermission.ExportSearchResults -> "Export Search Results"
+
+    override this.ToString() = this.Value
 
     static member TryCreate(value: string) =
         match value with

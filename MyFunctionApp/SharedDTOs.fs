@@ -24,8 +24,7 @@ type PagedDataResponse<'a> =
 [<RequireQualifiedAccess>]
 module PagedDataResponse =
     open FsToolkit.ErrorHandling
-    open MyFunctionApp.Extensions
-    open MyFunctionApp.Invariants
+    open MyFunctionApp.Extensions    
     open MyFunctionApp.Domain
 
     let fromDomain mapping (source: PagedData<'a>) : PagedDataResponse<'b> =
@@ -48,7 +47,7 @@ module PagedDataResponse =
             |> Option.defaultValue String.defaultValue
           SortDirection =
             source.SortDirection
-            |> Option.map Type.toString
+            |> Option.map (fun x -> x.Value)
             |> Option.defaultValue String.defaultValue
           Data = source.Data |> List.map mapping |> Array.ofList }
 

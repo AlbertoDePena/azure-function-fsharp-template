@@ -7,10 +7,12 @@ type SortDirection =
     | Ascending
     | Descending
 
-    override this.ToString() =
+    member this.Value =
         match this with
         | SortDirection.Ascending -> "Ascending"
         | SortDirection.Descending -> "Descending"
+
+    override this.ToString() = this.Value
 
     static member TryCreate(value: string) =
         match value with

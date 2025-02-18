@@ -1,9 +1,7 @@
 ﻿namespace MyFunctionApp.User.DTOs
 
 open System
-open MyFunctionApp.Invariants
 open MyFunctionApp.User.Domain
-open MyFunctionApp.Extensions
 
 [<CLIMutable>]
 type UserResponse =
@@ -19,7 +17,7 @@ module UserResponse =
         { Id = model.Id.Value
           EmailAddress = model.EmailAddress.Value
           DisplayName = model.DisplayName.Value
-          Type = model.Type |> Type.toString }
+          Type = model.Type.Value }
 
 [<NoComparison>]
 [<CLIMutable>]
@@ -40,7 +38,7 @@ module UserDetailsResponse =
             { Id = model.User.Id.Value
               EmailAddress = model.User.EmailAddress.Value
               DisplayName = model.User.DisplayName.Value
-              Type = model.User.Type |> Type.toString
-              Permissions = model.Permissions |> List.map Type.toString |> Seq.ofList
-              Groups = model.Roles |> List.map Type.toString |> Seq.ofList })
+              Type = model.User.Type.Value
+              Permissions = model.Permissions |> List.map (fun x -> x.Value) |> Seq.ofList
+              Groups = model.Roles |> List.map (fun x -> x.Value) |> Seq.ofList })
         |> Seq.ofList
