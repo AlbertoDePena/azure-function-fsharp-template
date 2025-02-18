@@ -1,4 +1,4 @@
-﻿namespace MyFunctionApp.HttpTriggers.SayHello
+﻿namespace MyFunctionApp.HttpTriggers
 
 open System
 open System.Data
@@ -28,9 +28,9 @@ open MyFunctionApp.HttpTriggers.DTOs
 type SearchUsers
     (
         logger: ILogger<SearchUsers>,
-        databaseOptions: IOptions<Database>,
         httpRequestHandler: HttpRequestHandler,
-        telemetryClient: TelemetryClient
+        telemetryClient: TelemetryClient,
+        userDatabase: UserDatabase
     ) =
 
     [<FunctionName(nameof SearchUsers)>]
@@ -41,15 +41,8 @@ type SearchUsers
 
         httpRequestHandler.HandleAsync httpRequest [ UserRole.Viewer ] (fun userName ->
             task {
-                let dbConnectionString =
-                    databaseOptions.Value.ConnectionString
-                    |> Text.TryCreate
-                    |> Option.defaultWith (fun () -> failwith "The database connection string is required")
-
-                let emailAddress =
-                    userName.Value
-                    |> EmailAddress.TryCreate
-                    |> Option.defaultWith (fun () -> failwith "The user name is not a proper email address")
+                
+                logger.LogInformation("{UserName} is requesting data", userName)
 
                 let queryValidation =
                     QueryRequest.toDomain
@@ -80,7 +73,7 @@ type SearchUsers
                     return BadRequestObjectResult(ApiMessageResponse.fromMessages errors) :> IActionResult
 
                 | Ok query ->
-                    let! pagedData = UserDatabase.getPagedData dbConnectionString query
+                    let! pagedData = userDatabase.GetPagedData query
 
                     let guid = Guid.NewGuid()
                     let correlationId = guid.ToString()

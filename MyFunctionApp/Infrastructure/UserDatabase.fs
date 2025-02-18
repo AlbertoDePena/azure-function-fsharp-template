@@ -8,26 +8,25 @@ open FsToolkit.ErrorHandling
 
 open MyFunctionApp.Infrastructure.Exceptions
 open MyFunctionApp.Infrastructure.Extensions
+open MyFunctionApp.Infrastructure.Options
 open MyFunctionApp.Domain
+open Microsoft.Extensions.Options
 
-[<RequireQualifiedAccess>]
-module UserDatabase =
+type UserDatabase(databaseOptions: IOptions<Database>) =
 
-    type DbConnectionString = Text
-
-    let private readUserRole (reader: SqlDataReader) : UserRole =
+    let readUserRole (reader: SqlDataReader) : UserRole =
         reader.GetOrdinal("RoleName")
         |> reader.GetString
         |> UserRole.TryCreate
         |> Option.defaultWith (fun () -> failwith "Missing RoleName column")
 
-    let private readUserPermission (reader: SqlDataReader) : UserPermission =
+    let readUserPermission (reader: SqlDataReader) : UserPermission =
         reader.GetOrdinal("PermissionName")
         |> reader.GetString
         |> UserPermission.TryCreate
         |> Option.defaultWith (fun () -> failwith "Missing PermissionName column")
 
-    let private readUser (reader: SqlDataReader) : User =
+    let readUser (reader: SqlDataReader) : User =
         { Id =
             reader.GetOrdinal("Id")
             |> reader.GetGuid
@@ -50,10 +49,10 @@ module UserDatabase =
             |> Option.defaultWith (fun () -> failwith "Missing Type column") }
 
     /// <exception cref="DataStorageException"></exception>
-    let getPagedData (dbConnectionString: DbConnectionString) (query: Query) : Task<PagedData<User>> =
+    member this.GetPagedData(query: Query) : Task<PagedData<User>> =
         task {
             try
-                use connection = new SqlConnection(dbConnectionString.Value)
+                use connection = new SqlConnection(databaseOptions.Value.ConnectionString)
                 use command = new SqlCommand("dbo.Users_Search", connection)
 
                 command.CommandType <- CommandType.StoredProcedure
@@ -110,13 +109,10 @@ module UserDatabase =
         }
 
     /// <exception cref="DataStorageException"></exception>
-    let tryFindByEmailAddress
-        (dbConnectionString: DbConnectionString)
-        (emailAddress: EmailAddress)
-        : Task<UserDetails option> =
+    member this.TryFindByEmailAddress(emailAddress: EmailAddress) : Task<UserDetails option> =
         task {
             try
-                use connection = new SqlConnection(dbConnectionString.Value)
+                use connection = new SqlConnection(databaseOptions.Value.ConnectionString)
                 use command = new SqlCommand("dbo.Users_FindByEmailAddress", connection)
 
                 command.CommandType <- CommandType.StoredProcedure

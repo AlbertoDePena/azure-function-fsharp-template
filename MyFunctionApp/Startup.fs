@@ -11,6 +11,7 @@ open Microsoft.IdentityModel.Protocols.OpenIdConnect
 open MyFunctionApp.Infrastructure.Telemetry
 open MyFunctionApp.HttpTriggers.HttpRequestHandler
 open MyFunctionApp.Infrastructure.Options
+open MyFunctionApp.Infrastructure.Database
 
 type Startup() =
     inherit FunctionsStartup()
@@ -32,6 +33,10 @@ type Startup() =
         builder.Services
             .AddSingleton<ITelemetryInitializer, CloudRoleNameInitializer>()
             .AddSingleton<ITelemetryInitializer, ComponentVersionInitializer>()
+        |> ignore
+
+        builder.Services
+            .AddSingleton<UserDatabase>()
         |> ignore
 
         builder.Services.AddSingleton<IConfigurationManager<OpenIdConnectConfiguration>>(
